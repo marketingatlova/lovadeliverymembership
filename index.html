@@ -3,27 +3,38 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOVA Points Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
       body { background-color: #F8F9FA; color: #2D3436; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      .container { background: #FFFFFF; padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
+      .container { background: #FFFFFF; padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
+      
       h2 { text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; }
       .user-info { text-align: center; margin-bottom: 25px; font-size: 11px; color: #adb5bd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
       input { width: 100%; padding: 16px; margin-bottom: 15px; background: #FFFFFF; border: 1.5px solid #E9ECEF; color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; border-radius: 10px; transition: all 0.2s ease; text-align: center; }
       input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
       #passcode { letter-spacing: 0.9em; padding-left: 1.4em; font-weight: 600; }
-      button { width: 100%; padding: 18px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; margin-top: 5px; letter-spacing: 0.5px; }
+
+      button { width: 100%; padding: 18px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; margin-top: 5px; }
       button:hover { background: #009900; }
+
       #points-form, #admin-dashboard { display: none; }
-      .admin-card { background: #F8F9FA; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #EEE; }
-      .admin-card span { font-weight: 600; font-size: 13px; }
-      .download-btn { width: auto; padding: 8px 12px; font-size: 11px; margin-top: 0; background: #333; }
+
+      /* Admin Card Detail Styling */
+      .admin-card { background: #FFFFFF; padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #F1F3F5; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+      .branch-name { font-weight: 700; font-size: 14px; color: #1A1A1A; }
+      .branch-stats { font-size: 12px; color: #868E96; font-weight: 500; }
+      .export-btn { width: 100%; padding: 10px; font-size: 12px; background: #343A40; margin-top: 5px; }
+      
       .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: #00B900; }
+      .secondary-btn { background: #F1F3F5; color: #495057; font-size: 12px; padding: 12px; margin-top: 15px; }
     </style>
   </head>
   <body>
     <div class="container">
+      
+      <!-- Login Section -->
       <div id="login-section">
         <h2>System Access</h2>
         <div class="user-info">Secure Internal Portal</div>
@@ -32,28 +43,35 @@
         <div id="login-status" class="status" style="color: #E63946;"></div>
       </div>
 
+      <!-- Admin Dashboard -->
       <div id="admin-dashboard">
-        <h2>Admin Panel</h2>
+        <h2>Master Dashboard</h2>
         <div class="user-info" id="admin-info"></div>
         <div id="branch-list"></div>
-        <button onclick="location.reload()" style="background:#EEE; color:#666; margin-top:20px;">LOGOUT</button>
+        <button class="secondary-btn" onclick="toggleView()">ADD POINTS MANUALLY</button>
+        <button class="secondary-btn" style="background:#FFF; border:1px solid #DEE2E6;" onclick="location.reload()">LOGOUT</button>
       </div>
 
+      <!-- Point Intake Form -->
       <div id="points-form">
-        <h2>Add Points</h2>
+        <h2 id="form-title">Add Points</h2>
         <div id="active-user" class="user-info"></div>
         <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
         <input type="text" id="billing" placeholder="Order ID / Billing ID">
         <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
         <button onclick="submitData()">CONFIRM TRANSACTION</button>
+        <button id="back-to-admin" class="secondary-btn" style="display:none;" onclick="toggleView()">BACK TO DASHBOARD</button>
         <div id="submit-status" class="status"></div>
       </div>
+
     </div>
 
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '';
+      let userRole = '';
 
+      // Input Masking
       document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
@@ -74,25 +92,48 @@
         const res = await api({ action: 'login', passcode: code });
         if (res.success) {
           currentPasscode = code;
+          userRole = res.role;
           document.getElementById('login-section').style.display = 'none';
           if (res.role === 'Admin') {
-            document.getElementById('admin-dashboard').style.display = 'block';
-            document.getElementById('admin-info').innerText = `${res.name} • Master Dashboard`;
-            loadAdminData();
+            showAdmin(res.name);
           } else {
-            document.getElementById('points-form').style.display = 'block';
-            document.getElementById('active-user').innerText = `${res.name} • ${res.branch}`;
+            showIntake(res.name, res.branch);
           }
         } else document.getElementById('login-status').innerText = res.message;
+      }
+
+      function showAdmin(name) {
+        document.getElementById('admin-dashboard').style.display = 'block';
+        document.getElementById('points-form').style.display = 'none';
+        document.getElementById('admin-info').innerText = `${name} • HQ MASTER`;
+        loadAdminData();
+      }
+
+      function showIntake(name, branch) {
+        document.getElementById('points-form').style.display = 'block';
+        document.getElementById('admin-dashboard').style.display = 'none';
+        document.getElementById('active-user').innerText = `${name} • ${branch}`;
+        if (userRole === 'Admin') document.getElementById('back-to-admin').style.display = 'block';
+      }
+
+      function toggleView() {
+        const isAdminVisible = document.getElementById('admin-dashboard').style.display === 'block';
+        if (isAdminVisible) showIntake("Admin Mode", "HQ");
+        else showAdmin("Admin Mode");
       }
 
       async function loadAdminData() {
         const res = await api({ action: 'getAdminData' });
         const list = document.getElementById('branch-list');
         list.innerHTML = "";
-        for (let b in res.counts) {
-          list.innerHTML += `<div class="admin-card"><span>${b} (${res.counts[b]})</span>
-            <button class="download-btn" onclick="downloadCSV('${b}')">EXPORT</button></div>`;
+        for (let b in res.summary) {
+          const s = res.summary[b];
+          list.innerHTML += `
+            <div class="admin-card">
+              <div class="branch-name">${b}</div>
+              <div class="branch-stats">${s.count} Orders • ฿${s.total.toLocaleString()}</div>
+              <button class="export-btn" onclick="downloadCSV('${b}')">GENERATE CSV</button>
+            </div>`;
         }
       }
 
