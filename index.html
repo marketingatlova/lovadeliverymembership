@@ -35,7 +35,8 @@
         backdrop-filter: blur(32px) saturate(140%);
         -webkit-backdrop-filter: blur(32px) saturate(140%);
         
-        padding: 44px 32px; 
+        /* Adjusted top padding to give the title and buttons more breathing room */
+        padding: 56px 32px 44px 32px; 
         border-radius: 32px; 
         width: 100%; 
         max-width: 420px; 
@@ -57,11 +58,11 @@
         position: relative;
       }
 
-      /* Language Toggle Button */
+      /* Language Toggle Button - MOVED TO TOP LEFT */
       .lang-toggle {
         position: absolute;
         top: 24px;
-        right: 24px;
+        left: 24px; /* Fixes the overlap with the refresh button */
         background: rgba(255,255,255,0.5);
         border: 1px solid rgba(255,255,255,0.8);
         padding: 6px 12px;
@@ -353,7 +354,7 @@
           }
         });
         
-        // Re-render dashboard if visible to translate dynamic text (like "Orders")
+        // Re-render dashboard if visible to translate dynamic text
         if (document.getElementById('admin-dashboard').style.display === 'block') {
           renderDashboard(currentSummary);
         }
