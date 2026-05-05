@@ -5,7 +5,6 @@
     <title>LOVA Points Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Cascadia+Mono&display=swap" rel="stylesheet">
     <style>
-      /* --- NEW LINE OA PLUS COLOR SCHEME --- */
       body { background-color: #F4F5F7; color: #333333; font-family: 'Sora', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
       .container { background: #FFFFFF; padding: 40px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #EAEAEA; }
       
@@ -29,7 +28,7 @@
       <!-- Login Screen -->
       <div id="login-section">
         <h2>PORTAL ACCESS</h2>
-        <input type="password" id="passcode" placeholder="Enter 6-Digit Code">
+        <input type="password" id="passcode" placeholder="Enter 6-Digit Code" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <button onclick="login()">UNLOCK</button>
         <div id="login-status" class="status" style="color: #F44336;"></div>
       </div>
@@ -38,9 +37,12 @@
       <div id="points-form">
         <h2>ADD POINTS</h2>
         <div id="active-user" class="user-info"></div>
-        <input type="text" id="phone" placeholder="Customer Phone (10 Digits)">
+        
+        <!-- STRICT NUMBER INPUTS -->
+        <input type="tel" id="phone" placeholder="Customer Phone (10 Digits)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <input type="text" id="billing" placeholder="Billing ID (Order #)">
-        <input type="number" id="amount" placeholder="Money Amount (THB)">
+        <input type="text" id="amount" inputmode="decimal" placeholder="Money Amount (THB)" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+        
         <button onclick="submitData()">SUBMIT TO CRM</button>
         <div id="submit-status" class="status"></div>
       </div>
@@ -75,7 +77,7 @@
         if (!code) return;
         
         document.getElementById('login-status').innerText = 'Verifying with Database...';
-        document.getElementById('login-status').style.color = '#888888'; // Neutral text while loading
+        document.getElementById('login-status').style.color = '#888888'; 
         
         const response = await sendToAPI({ action: 'login', passcode: code });
         
@@ -86,7 +88,7 @@
           document.getElementById('active-user').innerText = `Active Session: ${response.name} | ${response.branch}`;
         } else {
           document.getElementById('login-status').innerText = response.message;
-          document.getElementById('login-status').style.color = '#F44336'; // Red for error
+          document.getElementById('login-status').style.color = '#F44336'; 
         }
       }
 
@@ -97,15 +99,22 @@
         const amount = document.getElementById('amount').value;
         const statusBox = document.getElementById('submit-status');
         
-        // Basic frontend validation
+        // Basic frontend validation for empty fields
         if (!phone || !billing || !amount) {
            statusBox.innerText = 'Please fill all three fields.';
            statusBox.style.color = '#F44336';
            return;
         }
 
+        // Strict 10-digit phone validation
+        if (phone.length !== 10) {
+           statusBox.innerText = 'Phone number must be exactly 10 digits.';
+           statusBox.style.color = '#F44336';
+           return;
+        }
+
         statusBox.innerText = 'Pushing data to secure server...';
-        statusBox.style.color = '#00B900'; // LINE Green for success state
+        statusBox.style.color = '#00B900'; 
         
         const response = await sendToAPI({
           action: 'submit',
@@ -126,7 +135,7 @@
           // Clear success message after 3 seconds
           setTimeout(() => { statusBox.innerText = ''; }, 3000);
         } else {
-          statusBox.style.color = '#F44336'; // Red for error
+          statusBox.style.color = '#F44336'; 
         }
       }
     </script>
