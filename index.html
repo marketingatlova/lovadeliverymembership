@@ -7,7 +7,7 @@
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
       body { background-color: #F8F9FA; color: #2D3436; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      .container { background: #FFFFFF; padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
+      .container { background: #FFFFFF; padding: 45px 30px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
       
       h2 { text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; }
       .user-info { text-align: center; margin-bottom: 25px; font-size: 11px; color: #adb5bd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
@@ -27,8 +27,9 @@
       .branch-stats { font-size: 12px; color: #868E96; font-weight: 500; }
       .export-btn { width: 100%; padding: 10px; font-size: 12px; background: #343A40; margin-top: 5px; }
       
-      .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: #00B900; }
-      .secondary-btn { background: #F1F3F5; color: #495057; font-size: 12px; padding: 12px; margin-top: 15px; }
+      .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
+      .secondary-btn { background: #F1F3F5; color: #495057; font-size: 12px; padding: 12px; margin-top: 15px; font-weight: 600; }
+      .refresh-btn { background: #E9ECEF; color: #212529; font-size: 12px; padding: 12px; margin-top: 10px; font-weight: 600; border: 1px solid #DEE2E6; }
     </style>
   </head>
   <body>
@@ -48,6 +49,9 @@
         <h2>Master Dashboard</h2>
         <div class="user-info" id="admin-info"></div>
         <div id="branch-list"></div>
+        
+        <!-- Refresh and Toggle Controls -->
+        <button class="refresh-btn" onclick="loadAdminData()">REFRESH LIVE DATA</button>
         <button class="secondary-btn" onclick="toggleView()">ADD POINTS MANUALLY</button>
         <button class="secondary-btn" style="background:#FFF; border:1px solid #DEE2E6;" onclick="location.reload()">LOGOUT</button>
       </div>
@@ -123,9 +127,17 @@
       }
 
       async function loadAdminData() {
-        const res = await api({ action: 'getAdminData' });
         const list = document.getElementById('branch-list');
+        list.innerHTML = "<div style='text-align:center; padding:20px; color:#adb5bd; font-size:11px; font-weight:600; letter-spacing:1px;'>FETCHING LATEST DATA...</div>";
+        
+        const res = await api({ action: 'getAdminData' });
         list.innerHTML = "";
+        
+        if (Object.keys(res.summary).length === 0) {
+          list.innerHTML = "<div style='text-align:center; padding:30px; color:#adb5bd; font-size:12px;'>All orders have been exported.</div>";
+          return;
+        }
+
         for (let b in res.summary) {
           const s = res.summary[b];
           list.innerHTML += `
@@ -145,7 +157,9 @@
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url; a.download = `${branch}_Points.csv`;
-          a.click(); loadAdminData();
+          a.click(); 
+          // Auto-refresh after export to update counts
+          setTimeout(loadAdminData, 1000);
         }
       }
 
@@ -156,7 +170,9 @@
         const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a });
         document.getElementById('submit-status').innerText = res.message;
         if(res.success) {
-           document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
+           document.getElementById('phone').value = ''; 
+           document.getElementById('billing').value = ''; 
+           document.getElementById('amount').value = '';
            setTimeout(() => document.getElementById('submit-status').innerText = '', 3000);
         }
       }
