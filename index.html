@@ -2,145 +2,349 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>LOVA Points Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- STACKED TYPOGRAPHY: Inter for English/Numbers, Noto Sans Thai for Thai characters -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-      * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
-      body { background-color: #F9FAFB; color: #111827; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+      /* --- PREMIUM DESIGN UI RESET --- */
+      * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; margin: 0; padding: 0; }
       
+      body { 
+        background-color: #E6EAEF;
+        background-image: 
+          radial-gradient(circle at top left, rgba(255,255,255,0.8) 0%, transparent 50%),
+          radial-gradient(circle at bottom right, rgba(200,210,225,0.5) 0%, transparent 50%),
+          radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 20px 20px;
+        color: #1D1D1F; 
+        
+        /* THE NEW TYPOGRAPHY ENGINE */
+        font-family: 'Inter', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif; 
+        
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        padding: 20px;
+      }
+      
+      /* --- TRUE THICK LIQUID GLASS CONTAINER --- */
       .container { 
-        background: #FFFFFF; 
-        padding: 48px 32px; 
-        border-radius: 24px; 
+        background: rgba(255, 255, 255, 0.2); 
+        backdrop-filter: blur(32px) saturate(140%);
+        -webkit-backdrop-filter: blur(32px) saturate(140%);
+        padding: 44px 32px; 
+        border-radius: 32px; 
         width: 100%; 
-        max-width: 440px; 
-        box-shadow: 0 10px 40px rgba(0,0,0,0.03); 
-        border: 1px solid #F3F4F6; 
+        max-width: 420px; 
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-top: 1.5px solid rgba(255, 255, 255, 0.9);
+        border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 
+          0 24px 48px -12px rgba(0, 0, 0, 0.1), 
+          inset 0 4px 24px rgba(255, 255, 255, 0.4), 
+          inset 0 1px 1px rgba(255, 255, 255, 0.8); 
         display: flex;
         flex-direction: column;
         align-items: center;
+        transition: height 0.3s ease;
+        position: relative;
       }
       
-      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 8px; width: 100%; }
-      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; color: #111827; width: 100%; }
+      /* Language Toggle Button */
+      .lang-toggle {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        background: rgba(255,255,255,0.5);
+        border: 1px solid rgba(255,255,255,0.8);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #1D1D1F;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      }
+      .lang-toggle:active { transform: scale(0.95); background: rgba(255,255,255,0.8); }
+
+      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 4px; width: 100%; }
+      h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; color: #1D1D1F; text-align: center; }
       
-      .refresh-btn { position: absolute; right: -5px; background: none; border: none; cursor: pointer; padding: 5px; display: flex; }
-      .refresh-icon { fill: #9CA3AF; width: 20px; height: 20px; transition: transform 0.4s; }
-      .refresh-icon.spinning { animation: spin 0.8s linear infinite; }
+      .refresh-btn { position: absolute; right: -8px; background: none; border: none; cursor: pointer; padding: 8px; outline: none; border-radius: 50%; transition: background 0.2s; }
+      .refresh-btn:hover { background: rgba(255,255,255,0.6); }
+      .refresh-icon { fill: #6E6E73; width: 20px; height: 20px; transition: transform 0.4s ease-out; }
+      .refresh-icon.spinning { animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; fill: #1D1D1F; }
       @keyframes spin { 100% { transform: rotate(360deg); } }
       
-      .user-meta { text-align: center; margin-bottom: 24px; font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.2px; width: 100%; }
+      .user-meta { text-align: center; margin-bottom: 32px; font-size: 13px; font-weight: 500; color: #6E6E73; width: 100%; letter-spacing: -0.1px; }
       
-      input, select, .btn-primary, .btn-secondary { width: 100%; height: 56px; border-radius: 14px; font-size: 16px; font-weight: 600; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; text-align: center; text-align-last: center; transition: all 0.2s; border: 1.5px solid #F3F4F6; outline: none; margin-bottom: 16px; background: #FFF; appearance: none; }
-      input:focus, select:focus { border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
-      #passcode { letter-spacing: 0.9em; padding-left: 0.9em; font-weight: 700; }
-      
-      .btn-primary { background: #00B900; color: #FFF; cursor: pointer; border: none; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15); }
-      .btn-primary:hover { background: #009900; transform: translateY(-1px); }
-      .btn-secondary { background: #F3F4F6; color: #4B5563; cursor: pointer; border: none; margin-bottom: 12px; }
-      .btn-secondary:hover { background: #E5E7EB; }
-
-      #admin-dashboard, #points-form, #admin-branch-wrap { display: none; width: 100%; }
-
-      /* --- NEW COMPACT & SCROLLABLE DASHBOARD UI --- */
-      #branch-list {
-        width: 100%;
-        max-height: 400px; /* Constrains the height */
-        overflow-y: auto; /* Adds scrolling */
-        padding-right: 6px;
-        margin-bottom: 20px;
+      /* --- HIGH VISIBILITY INPUTS --- */
+      input, select { 
+        width: 100%; 
+        height: 56px; 
+        border-radius: 16px; 
+        font-size: 15px; /* Slightly adjusted to accommodate Thai script height */
+        font-weight: 500; 
+        font-family: inherit;
+        text-align: center; 
+        text-align-last: center; 
+        transition: all 0.2s ease; 
+        outline: none; 
+        margin-bottom: 16px; 
+        background: rgba(255, 255, 255, 0.9); 
+        border: 1px solid #FFFFFF;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        color: #1D1D1F;
+        appearance: none;
       }
       
-      /* Sleek invisible scrollbar */
-      #branch-list::-webkit-scrollbar { width: 4px; }
-      #branch-list::-webkit-scrollbar-track { background: transparent; }
-      #branch-list::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+      input::placeholder { color: #86868B; font-weight: 400; }
+      input:focus, select:focus { 
+        background: #FFFFFF; 
+        border-color: #00C300; 
+        box-shadow: 0 0 0 4px rgba(0, 195, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04); 
+      }
+      #passcode { letter-spacing: 0.8em; padding-left: 0.8em; font-weight: 700; font-size: 18px; }
+      
+      .select-wrapper { width: 100%; position: relative; margin-bottom: 16px; }
+      select { margin-bottom: 0; cursor: pointer; color: #1D1D1F; }
+      .select-wrapper::after { content: "▼"; font-size: 10px; color: #86868B; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+
+      /* --- BUTTONS --- */
+      .btn-primary, .btn-secondary {
+        width: 100%; 
+        height: 56px; 
+        border-radius: 16px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        font-family: inherit;
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        cursor: pointer; 
+        border: none; 
+        transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+      }
+      
+      .btn-primary { 
+        background: #00C300; 
+        color: #FFFFFF; 
+        margin-top: 8px; 
+        box-shadow: 0 8px 20px rgba(0, 195, 0, 0.25);
+      }
+      .btn-primary:active { transform: scale(0.97); opacity: 0.9; box-shadow: 0 4px 10px rgba(0, 195, 0, 0.15); }
+      
+      .btn-secondary { 
+        background: rgba(255, 255, 255, 0.8); 
+        border: 1px solid #FFFFFF;
+        color: #1D1D1F; 
+        margin-bottom: 12px; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      }
+      .btn-secondary:active { transform: scale(0.97); background: #FFFFFF; }
+      .btn-logout { color: #FF3B30; }
+
+      /* --- VIEW STATES & ANIMATION --- */
+      #admin-dashboard, #points-form { display: none; width: 100%; animation: iosFadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+      @keyframes iosFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+      #branch-list { width: 100%; max-height: 400px; overflow-y: auto; margin-bottom: 24px; padding: 4px; }
+      #branch-list::-webkit-scrollbar { display: none; } 
       
       .branch-card { 
-        background: #FFF; 
-        border-radius: 16px; 
+        background: rgba(255, 255, 255, 0.85); 
+        border-radius: 20px; 
         padding: 16px 20px; 
         margin-bottom: 12px; 
-        border: 1px solid #F3F4F6; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-        display: flex; /* Aligns items horizontally */
+        border: 1px solid #FFFFFF;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); 
+        display: flex; 
         justify-content: space-between; 
         align-items: center;
         gap: 12px;
       }
       
       .branch-info { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-      .branch-title { font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 4px; line-height: 1.3; }
-      .branch-data { font-size: 12px; color: #6B7280; font-weight: 500; }
+      .branch-title { font-size: 15px; font-weight: 600; color: #1D1D1F; margin-bottom: 4px; letter-spacing: -0.3px; }
+      .branch-data { font-size: 13px; color: #6E6E73; font-weight: 400; }
       
       .btn-export { 
-        width: auto; /* Shrinks to fit text */
-        height: 38px; 
+        height: 36px; 
         padding: 0 16px;
-        background: #374151; 
-        color: #FFF; 
-        border-radius: 10px; 
-        font-size: 11px; 
-        font-weight: 700; 
-        border: none; 
+        background: #F2F2F7; 
+        color: #007AFF; 
+        border-radius: 18px; 
+        font-size: 13px; 
+        font-weight: 600; 
+        border: none;
         cursor: pointer; 
-        transition: background 0.2s;
-        flex-shrink: 0; /* Prevents button from getting squished by long names */
+        transition: all 0.2s;
+        flex-shrink: 0; 
       }
-      .btn-export:hover { background: #1F2937; }
-      /* --------------------------------------------- */
+      .btn-export:active { background: #E5E5EA; transform: scale(0.95); }
 
-      .history-section { margin-top: 32px; border-top: 1px solid #F3F4F6; padding-top: 24px; width: 100%; }
-      .history-title { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; text-align: center; }
-      .history-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F9FAFB; font-size: 13px; color: #4B5563; }
-      .history-value { font-weight: 700; color: #111827; }
+      /* --- ENHANCED TRANSACTION HISTORY --- */
+      .history-section { margin-top: 24px; width: 100%; }
+      .history-title { font-size: 14px; font-weight: 600; color: #1D1D1F; letter-spacing: -0.2px; margin-bottom: 16px; text-align: left; padding-top: 24px; border-top: 1px solid rgba(0,0,0,0.06); }
       
-      .status-text { text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; width: 100%; }
+      .history-item { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 14px 16px; 
+        background: rgba(255,255,255,0.6);
+        border-radius: 16px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(255,255,255,0.8);
+      }
+      .history-details { display: flex; flex-direction: column; gap: 4px; }
+      .history-primary { font-size: 14px; font-weight: 600; color: #1D1D1F; display: flex; align-items: center; gap: 8px;}
+      .history-meta { font-size: 12px; color: #6E6E73; font-weight: 500; }
+      .history-amount { font-weight: 700; color: #1D1D1F; font-size: 15px; text-align: right; }
+      .history-time { font-size: 11px; color: #A1A1A6; font-weight: 500; margin-top: 4px; }
+      
+      .status-text { text-align: center; margin-top: 16px; font-size: 14px; font-weight: 500; min-height: 20px; width: 100%; transition: opacity 0.3s; }
+      .text-success { color: #00C300; }
+      .text-error { color: #FF3B30; }
+      .text-neutral { color: #6E6E73; }
     </style>
   </head>
   <body>
     <div class="container">
       
+      <!-- Language Toggle -->
+      <button class="lang-toggle" id="lang-toggle-btn" onclick="toggleLanguage()">TH</button>
+
+      <!-- LOGIN SECTION -->
       <section id="login-section" style="width: 100%;">
-        <div class="header-area"><h2>Portal Access</h2></div>
-        <p class="user-meta">Internal Secure Access</p>
+        <div class="header-area"><h2 data-i18n="loginTitle">Delivery Portal Access</h2></div>
+        <p class="user-meta" data-i18n="loginSub">Internal System Authentication</p>
         <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" maxlength="6">
-        <button class="btn-primary" onclick="login()">UNLOCK SYSTEM</button>
-        <div id="login-status" class="status-text" style="color: #EF4444;"></div>
+        <button class="btn-primary" onclick="login()" data-i18n="loginBtn">Continue</button>
+        <div id="login-status" class="status-text text-error"></div>
       </section>
 
+      <!-- ADMIN DASHBOARD -->
       <section id="admin-dashboard">
-        <div class="header-area"><h2>Master Dashboard</h2>
+        <div class="header-area">
+          <h2 data-i18n="dashTitle">Master Dashboard</h2>
           <button class="refresh-btn" onclick="loadAdminData()"><svg class="refresh-icon" id="refresh-svg" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
         </div>
         <p class="user-meta" id="admin-meta"></p>
         
-        <!-- SCROLLABLE LIST -->
         <div id="branch-list"></div>
 
-        <button class="btn-secondary" onclick="toggleView()">ADD POINTS MANUALLY</button>
-        <button class="btn-secondary" style="background:none; border:1.5px solid #F3F4F6; margin-bottom:0;" onclick="location.reload()">LOGOUT</button>
+        <button class="btn-secondary" onclick="toggleView()" data-i18n="addManualBtn">Add Points Manually</button>
+        <button class="btn-secondary btn-logout" style="margin-bottom:0;" onclick="location.reload()" data-i18n="signOutBtn">Sign Out</button>
       </section>
 
+      <!-- INTAKE FORM -->
       <section id="points-form">
-        <div class="header-area"><h2>Add Points</h2></div>
+        <div class="header-area"><h2 data-i18n="addPointsTitle">Add Points</h2></div>
         <p class="user-meta" id="active-user-meta"></p>
-        <div id="admin-branch-wrap"><select id="branch-override"><option value="">-- SELECT BRANCH --</option></select></div>
-        <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
-        <input type="text" id="billing" placeholder="Order ID / Billing ID">
-        <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
-        <button class="btn-primary" onclick="submitData()">CONFIRM TRANSACTION</button>
-        <button id="back-btn" class="btn-secondary" style="display:none;" onclick="toggleView()">BACK TO DASHBOARD</button>
+        
+        <div id="admin-branch-wrap" style="display:none;">
+          <div class="select-wrapper">
+            <select id="branch-override"><option value="" data-i18n="selectDest">Select Destination</option></select>
+          </div>
+        </div>
+        
+        <input type="tel" id="phone" data-i18n="phonePlaceholder" placeholder="Phone Number" maxlength="12">
+        <input type="text" id="billing" data-i18n="billingPlaceholder" placeholder="Billing ID">
+        <input type="text" id="amount" data-i18n="amountPlaceholder" placeholder="Amount (THB)" inputmode="numeric">
+        
+        <button class="btn-primary" onclick="submitData()" data-i18n="submitBtn">Submit Transaction</button>
+        
+        <button id="back-btn" class="btn-secondary" style="display:none; margin-top:12px;" onclick="toggleView()" data-i18n="backBtn">Back</button>
+        <button id="staff-signout" class="btn-secondary btn-logout" style="display:none; margin-top:12px;" onclick="location.reload()" data-i18n="signOutBtn">Sign Out</button>
+        
         <div id="submit-status" class="status-text"></div>
-        <div class="history-section" id="session-history-wrap" style="display:none;"><p class="history-title">Session History</p><div id="history-list"></div></div>
+        
+        <div class="history-section" id="session-history-wrap" style="display:none;">
+          <p class="history-title" data-i18n="recentTrans">Recent Transactions</p>
+          <div id="history-list"></div>
+        </div>
       </section>
 
     </div>
 
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
-      let currentPasscode = '', userRole = '', sessionHistory = [];
+      let currentPasscode = '', userRole = '', sessionHistory = [], currentSummary = null, currentBranchList = [];
+      let currentLang = 'en';
+
+      // --- TRANSLATION DICTIONARY ---
+      const i18n = {
+        en: {
+          loginTitle: "Delivery Portal Access",
+          loginSub: "Internal System Authentication",
+          loginBtn: "Continue",
+          dashTitle: "Master Dashboard",
+          emptyQueue: "All queues are up to date.",
+          addManualBtn: "Add Points Manually",
+          signOutBtn: "Sign Out",
+          addPointsTitle: "Add Points",
+          selectDest: "Select Destination",
+          phonePlaceholder: "Phone Number",
+          billingPlaceholder: "Billing ID",
+          amountPlaceholder: "Amount (THB)",
+          submitBtn: "Submit Transaction",
+          backBtn: "Back",
+          recentTrans: "Recent Transactions",
+          orders: "Orders",
+          export: "Export",
+          syncing: "Processing...",
+          success: "Transaction Successful"
+        },
+        th: {
+          loginTitle: "การเพิ่มคะแนนจาก Delivery",
+          loginSub: "สำหรับพนักงานเท่านั้น",
+          loginBtn: "เข้าสู่ระบบ",
+          dashTitle: "ภาพรวม",
+          emptyQueue: "ทำรายการครบถ้วนแล้ว",
+          addManualBtn: "เพิ่มพอยต์ด้วยตนเอง",
+          signOutBtn: "ออกจากระบบ",
+          addPointsTitle: "สะสมคะแนน",
+          selectDest: "เลือกสาขาที่ให้บริการ",
+          phonePlaceholder: "เบอร์โทรศัพท์ลูกค้า",
+          billingPlaceholder: "หมายเลขบิล / Order ID",
+          amountPlaceholder: "ยอดใช้จ่ายสุทธิ (บาท)",
+          submitBtn: "ยืนยันการทำรายการ",
+          backBtn: "ย้อนกลับ",
+          recentTrans: "ประวัติการทำรายการล่าสุด",
+          orders: "ออเดอร์",
+          export: "ดาวน์โหลดข้อมูล",
+          syncing: "กำลังประมวลผล...",
+          success: "ทำรายการสำเร็จ"
+        }
+      };
+
+      function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'th' : 'en';
+        document.getElementById('lang-toggle-btn').innerText = currentLang === 'en' ? 'TH' : 'EN';
+        applyTranslations();
+      }
+
+      function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (i18n[currentLang][key]) {
+            if (el.tagName === 'INPUT') el.placeholder = i18n[currentLang][key];
+            else if (el.tagName === 'OPTION') el.innerText = i18n[currentLang][key];
+            else el.innerText = i18n[currentLang][key];
+          }
+        });
+        
+        if (document.getElementById('admin-dashboard').style.display === 'block') {
+          renderDashboard(currentSummary);
+        }
+      }
 
       function loadXLSX(cb) {
         if (window.XLSX) return cb();
@@ -157,13 +361,18 @@
         let v = e.target.value.replace(/\D/g, ''); e.target.value = v ? Number(v).toLocaleString() : "";
       });
 
+      function setStatus(elementId, msg, type) {
+        const el = document.getElementById(elementId);
+        el.innerText = msg;
+        el.className = `status-text text-${type}`;
+      }
+
       async function api(p) { return (await fetch(API_URL, {method:'POST', body: JSON.stringify(p)})).json(); }
 
       async function login() {
         const code = document.getElementById('passcode').value;
         if(!code) return;
-        document.getElementById('login-status').innerText = 'Authenticating...';
-        document.getElementById('login-status').style.color = '#9CA3AF';
+        setStatus('login-status', i18n[currentLang].syncing, 'neutral');
         
         const res = await api({ action: 'login', passcode: code });
         
@@ -172,36 +381,43 @@
           document.getElementById('login-section').style.display = 'none';
           
           if (res.role === 'Admin') {
-            const sel = document.getElementById('branch-override');
-            sel.innerHTML = '<option value="">-- SELECT BRANCH --</option>';
-            res.branchList.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
-            
-            renderDashboard(res.adminData);
+            currentBranchList = res.branchList;
+            populateDropdown();
+            currentSummary = res.adminData;
+            renderDashboard(currentSummary);
             document.getElementById('admin-dashboard').style.display = 'block';
-            document.getElementById('admin-meta').innerText = `${res.name} • Master Dashboard`;
+            document.getElementById('admin-meta').innerText = `${res.name} • Admin Session`;
           } else {
             showIntake(res.name, res.branch);
           }
         } else {
-          document.getElementById('login-status').innerText = res.message;
-          document.getElementById('login-status').style.color = '#EF4444';
+          setStatus('login-status', res.message, 'error');
         }
+      }
+
+      function populateDropdown() {
+        const sel = document.getElementById('branch-override');
+        sel.innerHTML = `<option value="" data-i18n="selectDest">${i18n[currentLang].selectDest}</option>`;
+        currentBranchList.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
       }
 
       function renderDashboard(summary) {
         const list = document.getElementById('branch-list'); list.innerHTML = "";
-        if (!summary || Object.keys(summary).length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:#D1D5DB; font-size:13px;'>Pending list clear.</p>"; return; }
+        currentSummary = summary;
+        if (!summary || Object.keys(summary).length === 0) { 
+          list.innerHTML = `<p style='text-align:center; padding:40px; color:#86868B; font-size:14px;'>${i18n[currentLang].emptyQueue}</p>`; 
+          return; 
+        }
         
-        // Compact Inline Render
         for (let b in summary) {
           const s = summary[b];
           list.innerHTML += `
             <div class="branch-card">
               <div class="branch-info">
                 <div class="branch-title">${b}</div>
-                <div class="branch-data">${s.count} Orders • ฿${s.total.toLocaleString()}</div>
+                <div class="branch-data">${s.count} ${i18n[currentLang].orders} • ฿${s.total.toLocaleString()}</div>
               </div>
-              <button class="btn-export" onclick="prepareExcel('${b}')">EXPORT</button>
+              <button class="btn-export" onclick="prepareExcel('${b}')">${i18n[currentLang].export}</button>
             </div>`;
         }
       }
@@ -217,14 +433,20 @@
         document.getElementById('points-form').style.display = 'block'; 
         document.getElementById('admin-dashboard').style.display = 'none'; 
         document.getElementById('active-user-meta').innerText = `${n} • ${b}`; 
+        
         if (userRole === 'Admin') {
           document.getElementById('back-btn').style.display = 'flex';
           document.getElementById('admin-branch-wrap').style.display = 'block';
+          document.getElementById('staff-signout').style.display = 'none'; 
+        } else {
+          document.getElementById('back-btn').style.display = 'none';
+          document.getElementById('admin-branch-wrap').style.display = 'none';
+          document.getElementById('staff-signout').style.display = 'flex'; 
         }
       }
 
       function toggleView() {
-        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Session", "HQ");
+        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Mode", "Headquarters");
         else {
           document.getElementById('admin-dashboard').style.display = 'block';
           document.getElementById('points-form').style.display = 'none';
@@ -233,7 +455,7 @@
       }
 
       function prepareExcel(branch) {
-        document.getElementById('submit-status').innerText = "Loading Export Engine...";
+        setStatus('submit-status', i18n[currentLang].syncing, 'neutral');
         loadXLSX(async () => {
           const res = await api({ action: 'exportBranch', branchName: branch });
           if (res.success) {
@@ -241,31 +463,55 @@
             const ws = XLSX.utils.aoa_to_sheet(data), wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Points");
             XLSX.writeFile(wb, `${branch}_Upload.xlsx`);
-            document.getElementById('submit-status').innerText = "";
+            setStatus('submit-status', '', 'neutral');
             setTimeout(loadAdminData, 1000);
           }
         });
       }
 
       async function submitData() {
-        const p = document.getElementById('phone').value.replace(/\D/g, ''), b = document.getElementById('billing').value, a = document.getElementById('amount').value.replace(/\D/g, ''), ov = document.getElementById('branch-override').value;
-        const status = document.getElementById('submit-status');
-        if (userRole === 'Admin' && !ov) { status.innerText = 'Select Branch'; status.style.color = '#EF4444'; return; }
-        if (p.length !== 10) { status.innerText = 'Invalid Phone'; status.style.color = '#EF4444'; return; }
-        status.innerText = 'Syncing...'; status.style.color = '#00B900';
+        const p = document.getElementById('phone').value.replace(/\D/g, '');
+        const b = document.getElementById('billing').value;
+        const a = document.getElementById('amount').value.replace(/\D/g, '');
+        const ov = document.getElementById('branch-override').value;
+        
+        if (userRole === 'Admin' && !ov) { setStatus('submit-status', 'Error', 'error'); return; }
+        if (p.length !== 10) { setStatus('submit-status', 'Error', 'error'); return; }
+        
+        setStatus('submit-status', i18n[currentLang].syncing, 'neutral');
         const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a, branchOverride: ov });
+        
         if(res.success) {
-          sessionHistory.unshift({ phone: p, amount: a, branch: res.branch });
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          
+          sessionHistory.unshift({ phone: p, amount: a, branch: res.branch, billing: b || '-', time: timeString });
           updateHistory();
           document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
-          status.innerText = "Synced!"; setTimeout(() => status.innerText = '', 3000);
+          setStatus('submit-status', i18n[currentLang].success, 'success'); 
+          setTimeout(() => setStatus('submit-status', '', 'neutral'), 3000);
+        } else {
+          setStatus('submit-status', res.message, 'error');
         }
       }
 
       function updateHistory() {
         document.getElementById('session-history-wrap').style.display = 'block';
-        document.getElementById('history-list').innerHTML = sessionHistory.slice(0, 5).map(h => `<div class="history-item"><span class="history-label">${h.phone} (${h.branch})</span><span class="history-value">฿${Number(h.amount).toLocaleString()}</span></div>`).join('');
+        document.getElementById('history-list').innerHTML = sessionHistory.slice(0, 5).map(h => `
+          <div class="history-item">
+            <div class="history-details">
+              <span class="history-primary">${h.phone}</span>
+              <span class="history-meta">${h.billing} • ${h.branch}</span>
+            </div>
+            <div class="history-details" style="align-items: flex-end;">
+              <span class="history-amount">฿${Number(h.amount).toLocaleString()}</span>
+              <span class="history-time">${h.time}</span>
+            </div>
+          </div>`).join('');
       }
+      
+      // Initialize Default Language
+      applyTranslations();
     </script>
   </body>
 </html>
