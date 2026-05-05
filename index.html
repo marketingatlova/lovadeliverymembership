@@ -4,47 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOVA Points Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
-      body { background-color: #F9FAFB; color: #111827; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+      body { background-color: #F9FAFB; color: #111827; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
       
       .container { background: #FFFFFF; padding: 48px 32px; border-radius: 24px; width: 100%; max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #F3F4F6; }
 
       .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 8px; }
-      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; color: #111827; }
+      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; color: #111827; width: 100%; }
       
-      .refresh-btn { position: absolute; right: -10px; background: none; border: none; cursor: pointer; padding: 10px; display: flex; }
-      .refresh-icon { fill: #9CA3AF; width: 18px; height: 18px; transition: transform 0.4s; }
+      .refresh-btn { position: absolute; right: -5px; background: none; border: none; cursor: pointer; padding: 5px; display: flex; }
+      .refresh-icon { fill: #9CA3AF; width: 20px; height: 20px; transition: transform 0.4s; }
       .refresh-icon.spinning { animation: spin 0.8s linear infinite; }
       @keyframes spin { 100% { transform: rotate(360deg); } }
 
       .user-meta { text-align: center; margin-bottom: 32px; font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.2px; }
 
-      /* Expert Component Geometry: 56px Height */
       input, select, .btn-primary, .btn-secondary { width: 100%; height: 56px; border-radius: 14px; font-size: 16px; font-weight: 600; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; text-align: center; text-align-last: center; transition: all 0.2s; border: 1.5px solid #F3F4F6; outline: none; margin-bottom: 16px; background: #FFF; appearance: none; }
       
       input:focus, select:focus { border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
       #passcode { letter-spacing: 0.9em; padding-left: 0.9em; font-weight: 700; }
 
-      .btn-primary { background: #00B900; color: #FFF; cursor: pointer; border: none; margin-top: 8px; }
+      .btn-primary { background: #00B900; color: #FFF; cursor: pointer; border: none; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15); }
       .btn-primary:hover { background: #009900; transform: translateY(-1px); }
       .btn-secondary { background: #F3F4F6; color: #4B5563; cursor: pointer; border: none; }
+      .btn-secondary:hover { background: #E5E7EB; }
 
       /* Session History Section */
       .history-section { margin-top: 32px; border-top: 1px solid #F3F4F6; padding-top: 24px; }
-      .history-title { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; text-align: center; }
-      .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F9FAFB; font-size: 13px; color: #4B5563; }
-      .history-item span:last-child { font-weight: 700; color: #111827; }
+      .history-title { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; text-align: center; }
+      .history-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F9FAFB; font-size: 13px; color: #4B5563; }
+      .history-label { font-weight: 500; }
+      .history-value { font-weight: 700; color: #111827; }
 
       #admin-dashboard, #points-form, #admin-branch-wrap { display: none; }
-      .branch-card { background: #F9FAFB; border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid #F3F4F6; }
-      .branch-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-      .branch-data { font-size: 12px; color: #6B7280; margin-bottom: 12px; }
-      .btn-export { width: 100%; height: 42px; background: #374151; color: #FFF; border-radius: 10px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; }
+      .branch-card { background: #FFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; border: 1px solid #F3F4F6; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+      .branch-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 6px; }
+      .branch-data { font-size: 12px; color: #6B7280; font-weight: 500; margin-bottom: 16px; }
+      .btn-export { width: 100%; height: 44px; background: #374151; color: #FFF; border-radius: 10px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: background 0.2s; }
+      .btn-export:hover { background: #1F2937; }
       
-      .status-text { text-align: center; margin-top: 16px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
+      .status-text { text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
     </style>
   </head>
   <body>
@@ -92,7 +94,7 @@
 
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
-      let currentPasscode = '', userRole = '', history = [];
+      let currentPasscode = '', userRole = '', sessionHistory = [];
 
       document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
@@ -115,6 +117,7 @@
           if (res.role === 'Admin') {
             const bRes = await api({ action: 'getBranches' });
             const sel = document.getElementById('branch-override');
+            sel.innerHTML = '<option value="">-- SELECT BRANCH --</option>';
             bRes.branches.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
             showAdmin(res.name);
           } else showIntake(res.name, res.branch);
@@ -157,19 +160,26 @@
       }
 
       async function submitData() {
-        const p = document.getElementById('phone').value.replace(/\D/g, ''), b = document.getElementById('billing').value, a = document.getElementById('amount').value.replace(/\D/g, ''), ov = document.getElementById('branch-override').value;
+        const pInput = document.getElementById('phone').value;
+        const pRaw = pInput.replace(/\D/g, '');
+        const b = document.getElementById('billing').value;
+        const aInput = document.getElementById('amount').value;
+        const aRaw = aInput.replace(/\D/g, '');
+        const ov = document.getElementById('branch-override').value;
         const status = document.getElementById('submit-status');
         
         if (userRole === 'Admin' && !ov) { status.innerText = 'Select a Branch'; status.style.color = '#EF4444'; return; }
-        if (p.length !== 10) { status.innerText = 'Invalid Phone'; status.style.color = '#EF4444'; return; }
+        if (pRaw.length !== 10) { status.innerText = 'Invalid Phone'; status.style.color = '#EF4444'; return; }
 
         status.innerText = 'Syncing...'; status.style.color = '#00B900';
-        const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a, branchOverride: ov });
+        const res = await api({ action:'submit', passcode:currentPasscode, phone:pRaw, billingId:b, amount:aRaw, branchOverride: ov });
         
         if(res.success) {
-          history.unshift({ phone: p, amount: a, branch: res.branch });
+          sessionHistory.unshift({ phone: pRaw, amount: aRaw, branch: res.branch });
           updateHistory();
-          document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
+          document.getElementById('phone').value = ''; 
+          document.getElementById('billing').value = ''; 
+          document.getElementById('amount').value = '';
           status.innerText = "Transaction Synced!";
           setTimeout(() => status.innerText = '', 3000);
         }
@@ -178,7 +188,7 @@
       function updateHistory() {
         const wrap = document.getElementById('session-history-wrap'), list = document.getElementById('history-list');
         wrap.style.display = 'block';
-        list.innerHTML = history.slice(0, 5).map(h => `<div class="history-item"><span>${h.phone} (${h.branch})</span><span>฿${Number(h.amount).toLocaleString()}</span></div>`).join('');
+        list.innerHTML = sessionHistory.slice(0, 5).map(h => `<div class="history-item"><span class="history-label">${h.phone} (${h.branch})</span><span class="history-value">฿${Number(h.amount).toLocaleString()}</span></div>`).join('');
       }
     </script>
   </body>
