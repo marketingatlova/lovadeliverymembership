@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LOVA Points Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Cascadia+Mono&display=swap" rel="stylesheet">
+    <style>
+      body { background-color: #121212; color: #FFFFFF; font-family: 'Sora', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+      .container { background: #1E1E1E; padding: 40px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+      h2 { text-align: center; margin-bottom: 30px; letter-spacing: 1px; }
+      input { width: 100%; padding: 12px; margin-bottom: 20px; background: #2A2A2A; border: 1px solid #444; color: #FFF; font-family: 'Cascadia Mono', monospace; border-radius: 4px; box-sizing: border-box; }
+      input:focus { outline: none; border-color: #888; }
+      button { width: 100%; padding: 14px; background: #FFF; color: #000; border: none; font-family: 'Sora', sans-serif; font-weight: 600; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
+      button:hover { background: #E0E0E0; }
+      #points-form, #admin-dashboard { display: none; }
+      .status { text-align: center; margin-top: 15px; font-size: 0.9em; font-family: 'Cascadia Mono', monospace; color: #4CAF50; }
+      .user-info { text-align: center; margin-bottom: 20px; font-size: 0.85em; color: #AAA; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="login-section">
+        <h2>PORTAL ACCESS</h2>
+        <input type="password" id="passcode" placeholder="Enter 6-Digit Code">
+        <button onclick="login()">UNLOCK</button>
+        <div id="login-status" class="status" style="color: #F44336;"></div>
+      </div>
+
+      <div id="points-form">
+        <h2>ADD POINTS</h2>
+        <div id="active-user" class="user-info"></div>
+        <input type="text" id="phone" placeholder="Customer Phone (10 Digits)">
+        <input type="text" id="billing" placeholder="Billing ID (Order #)">
+        <input type="number" id="amount" placeholder="Money Amount (THB)">
+        <button onclick="submitData()">SUBMIT TO CRM</button>
+        <div id="submit-status" class="status"></div>
+      </div>
+    </div>
+
+    <script>
+      // Your deployment URL goes here
+      const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
+      let currentPasscode = '';
+
+      async function sendToAPI(payload) {
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          return await response.json();
+        } catch (error) {
+          return { success: false, message: "Network error. Try again." };
+        }
+      }
+
+      async function login() {
+        const code = document.getElementById('passcode').value;
+        if (!code) return;
+        
+        document.getElementById('login-status').innerText = 'Verifying...';
+        
+        const response = await sendToAPI({ action: 'login', passcode: code });
+        
+        if (response.success) {
+          currentPasscode = code;
+          document.getElementById('login-section').style.display = 'none';
+          document.getElementById('points-form').style.display = 'block';
+          document.getElementById('active-user').innerText = `Active Session: ${response.name} | ${response.branch}`;
+        } else {
+          document.getElementById('login-status').innerText = response.message;
+        }
+      }
+
+      async function submitData() {
+        const phone = document.getElementById('phone').value;
+        const billing = document.getElementById('billing').value;
+        const amount = document.getElementById('amount').value;
+        
+        if (!phone || !billing || !amount) {
+           document.getElementById('submit-status').innerText = 'Please fill all fields.';
+           document.getElementById('submit-status').style.color = '#F44336';
+           return;
+        }
+
+        document.getElementById('submit-status').innerText = 'Pushing to database...';
+        document.getElementById('submit-status').style.color = '#4CAF50';
+        
+        const response = await sendToAPI({
+          action: 'submit',
+          passcode: currentPasscode,
+          phone: phone,
+          billingId: billing,
+          amount: amount
+        });
+
+        document.getElementById('submit-status').innerText = response.message;
+        
+        if(response.success) {
+          document.getElementById('phone').value = '';
+          document.getElementById('billing').value = '';
+          document.getElementById('amount').value = '';
+          setTimeout(() => document.getElementById('submit-status').innerText = '', 3000);
+        } else {
+          document.getElementById('submit-status').style.color = '#F44336';
+        }
+      }
+    </script>
+  </body>
+</html>
