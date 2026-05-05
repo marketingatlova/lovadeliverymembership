@@ -3,47 +3,55 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOVA Points Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Cascadia+Mono:wght@600&display=swap" rel="stylesheet">
+    <!-- Importing Inter for business-like legibility and Montserrat for branding -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <style>
-      * { box-sizing: border-box; }
-      body { background-color: #F4F5F7; color: #333333; font-family: 'Sora', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      .container { background: #FFFFFF; padding: 35px 25px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #EAEAEA; }
+      * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
       
-      /* Centering Logic for Login */
-      #login-section { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      body { background-color: #F8F9FA; color: #2D3436; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
       
-      h2 { text-align: center; margin-bottom: 25px; letter-spacing: 0.5px; color: #111111; font-size: 22px; }
+      .container { background: #FFFFFF; padding: 40px 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #E9ECEF; }
       
-      input { width: 100%; padding: 14px 12px; margin-bottom: 15px; background: #FFFFFF; border: 1px solid #D9D9D9; color: #333333; font-family: 'Cascadia Mono', monospace; font-size: 18px; font-weight: 600; border-radius: 6px; transition: all 0.2s ease; appearance: none; text-align: center; }
-      input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 2px rgba(0, 185, 0, 0.1); }
+      #login-section { display: flex; flex-direction: column; align-items: center; }
       
-      button { width: 100%; padding: 16px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 16px; cursor: pointer; border-radius: 6px; transition: background 0.3s ease; appearance: none; margin-top: 10px; }
+      h2 { text-align: center; margin-bottom: 25px; letter-spacing: 1px; color: #1A1A1A; font-family: 'Montserrat', sans-serif; font-size: 20px; text-transform: uppercase; }
+      
+      /* Business-like inputs: Inter font, centered, with no auto-zoom on iOS */
+      input { width: 100%; padding: 16px; margin-bottom: 16px; background: #FFFFFF; border: 1px solid #CED4DA; color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; border-radius: 8px; transition: all 0.2s ease; appearance: none; text-align: center; }
+      
+      input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.1); }
+      
+      /* PINCODE FIX: Wide letter spacing so dots do not touch */
+      #passcode { letter-spacing: 0.8em; padding-left: 1.2em; /* Offsets the spacing so dots stay centered */ }
+      
+      button { width: 100%; padding: 16px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; border-radius: 8px; transition: background 0.3s ease; appearance: none; margin-top: 10px; letter-spacing: 0.5px; }
+      
       button:hover { background: #009900; }
       
       #points-form { display: none; }
-      .status { text-align: center; margin-top: 15px; font-size: 0.85em; font-family: 'Cascadia Mono', monospace; color: #00B900; min-height: 20px; }
-      .user-info { text-align: center; margin-bottom: 20px; font-size: 0.85em; color: #888888; }
+      .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 500; color: #00B900; min-height: 20px; }
+      .user-info { text-align: center; margin-bottom: 25px; font-size: 13px; color: #6C757D; font-weight: 400; }
     </style>
   </head>
   <body>
     <div class="container">
       
       <div id="login-section">
-        <h2>PORTAL ACCESS</h2>
+        <h2>Portal Access</h2>
         <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" maxlength="6">
-        <button onclick="login()">UNLOCK</button>
-        <div id="login-status" class="status" style="color: #F44336;"></div>
+        <button onclick="login()">UNLOCK SYSTEM</button>
+        <div id="login-status" class="status" style="color: #D63031;"></div>
       </div>
 
       <div id="points-form">
-        <h2>ADD POINTS</h2>
+        <h2>Add Points</h2>
         <div id="active-user" class="user-info"></div>
         
         <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
-        <input type="text" id="billing" placeholder="Order ID / Billing ID">
+        <input type="text" id="billing" placeholder="Grab / Order ID">
         <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
         
-        <button onclick="submitData()">SUBMIT TO CRM</button>
+        <button onclick="submitData()">CONFIRM TRANSACTION</button>
         <div id="submit-status" class="status"></div>
       </div>
 
@@ -53,15 +61,13 @@
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '';
 
-      // PHONE MASKING (XXX-XXX-XXXX)
       document.getElementById('phone').addEventListener('input', function (e) {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
       });
 
-      // AMOUNT MASKING (Commas & Auto-Rounding)
       document.getElementById('amount').addEventListener('input', function (e) {
-        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits (Forces rounding)
+        let value = e.target.value.replace(/\D/g, '');
         if (value === "") { e.target.value = ""; return; }
         e.target.value = Number(value).toLocaleString();
       });
@@ -76,14 +82,14 @@
           });
           return await response.json();
         } catch (error) {
-          return { success: false, message: "Network error. Check connection." };
+          return { success: false, message: "Connection lost. Retry." };
         }
       }
 
       async function login() {
         const code = document.getElementById('passcode').value;
         if (!code) return;
-        document.getElementById('login-status').innerText = 'Verifying...';
+        document.getElementById('login-status').innerText = 'Authenticating...';
         const response = await sendToAPI({ action: 'login', passcode: code });
         if (response.success) {
           currentPasscode = code;
@@ -102,12 +108,12 @@
         const statusBox = document.getElementById('submit-status');
         
         if (phoneRaw.length !== 10) {
-           statusBox.innerText = 'Phone must be 10 digits.';
-           statusBox.style.color = '#F44336';
+           statusBox.innerText = 'Invalid Phone Number';
+           statusBox.style.color = '#D63031';
            return;
         }
 
-        statusBox.innerText = 'Syncing...';
+        statusBox.innerText = 'Processing...';
         statusBox.style.color = '#00B900'; 
         
         const response = await sendToAPI({
