@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- CRITICAL FIX: prevents user from accidentally zooming the page out of frame -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOVA Points Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Cascadia+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Cascadia+Mono:wght@600&display=swap" rel="stylesheet">
     <style>
-      /* Apply strict box-sizing so padding doesn't push the box off-screen */
       * { box-sizing: border-box; }
-      
       body { background-color: #F4F5F7; color: #333333; font-family: 'Sora', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      
-      /* Changed width to 100% with a max-width, but relying on body padding to keep it off the screen edges */
       .container { background: #FFFFFF; padding: 35px 25px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #EAEAEA; }
+      
+      /* Centering Logic for Login */
+      #login-section { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
       
       h2 { text-align: center; margin-bottom: 25px; letter-spacing: 0.5px; color: #111111; font-size: 22px; }
       
-      /* CRITICAL FIX: font-size MUST be 16px minimum to stop iOS Safari from auto-zooming */
-      input { width: 100%; padding: 14px 12px; margin-bottom: 15px; background: #FFFFFF; border: 1px solid #D9D9D9; color: #333333; font-family: 'Cascadia Mono', monospace; font-size: 16px; border-radius: 6px; transition: all 0.2s ease; appearance: none; }
+      input { width: 100%; padding: 14px 12px; margin-bottom: 15px; background: #FFFFFF; border: 1px solid #D9D9D9; color: #333333; font-family: 'Cascadia Mono', monospace; font-size: 18px; font-weight: 600; border-radius: 6px; transition: all 0.2s ease; appearance: none; text-align: center; }
       input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 2px rgba(0, 185, 0, 0.1); }
       
       button { width: 100%; padding: 16px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 16px; cursor: pointer; border-radius: 6px; transition: background 0.3s ease; appearance: none; margin-top: 10px; }
       button:hover { background: #009900; }
       
       #points-form { display: none; }
-      
       .status { text-align: center; margin-top: 15px; font-size: 0.85em; font-family: 'Cascadia Mono', monospace; color: #00B900; min-height: 20px; }
       .user-info { text-align: center; margin-bottom: 20px; font-size: 0.85em; color: #888888; }
     </style>
@@ -32,25 +28,20 @@
   <body>
     <div class="container">
       
-      <!-- Login Screen -->
       <div id="login-section">
         <h2>PORTAL ACCESS</h2>
-        <!-- ADDED: maxlength="6" -->
-        <input type="password" id="passcode" placeholder="Enter 6-Digit Code" inputmode="numeric" pattern="[0-9]*" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" maxlength="6">
         <button onclick="login()">UNLOCK</button>
         <div id="login-status" class="status" style="color: #F44336;"></div>
       </div>
 
-      <!-- Point Intake Form -->
       <div id="points-form">
         <h2>ADD POINTS</h2>
         <div id="active-user" class="user-info"></div>
         
-        <input type="tel" id="phone" placeholder="Customer Phone (10 Digits)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        <input type="text" id="billing" placeholder="Billing ID (Order #)">
-        
-        <!-- ADDED: maxlength="8" (Caps at 99,999.99 THB to prevent infinite entries) -->
-        <input type="text" id="amount" inputmode="decimal" placeholder="Money Amount (THB)" maxlength="8" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+        <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
+        <input type="text" id="billing" placeholder="Order ID / Billing ID">
+        <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
         
         <button onclick="submitData()">SUBMIT TO CRM</button>
         <div id="submit-status" class="status"></div>
@@ -62,80 +53,77 @@
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '';
 
+      // PHONE MASKING (XXX-XXX-XXXX)
+      document.getElementById('phone').addEventListener('input', function (e) {
+        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+        e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
+      });
+
+      // AMOUNT MASKING (Commas & Auto-Rounding)
+      document.getElementById('amount').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits (Forces rounding)
+        if (value === "") { e.target.value = ""; return; }
+        e.target.value = Number(value).toLocaleString();
+      });
+
       async function sendToAPI(payload) {
         try {
           const response = await fetch(API_URL, {
             redirect: "follow",
             method: 'POST',
-            headers: {
-              "Content-Type": "text/plain;charset=utf-8",
-            },
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
           });
           return await response.json();
         } catch (error) {
-          return { success: false, message: "Network error. Check your connection." };
+          return { success: false, message: "Network error. Check connection." };
         }
       }
 
       async function login() {
         const code = document.getElementById('passcode').value;
         if (!code) return;
-        
-        document.getElementById('login-status').innerText = 'Verifying with Database...';
-        document.getElementById('login-status').style.color = '#888888'; 
-        
+        document.getElementById('login-status').innerText = 'Verifying...';
         const response = await sendToAPI({ action: 'login', passcode: code });
-        
         if (response.success) {
           currentPasscode = code;
           document.getElementById('login-section').style.display = 'none';
           document.getElementById('points-form').style.display = 'block';
-          document.getElementById('active-user').innerText = `Active Session: ${response.name} | ${response.branch}`;
+          document.getElementById('active-user').innerText = `${response.name} | ${response.branch}`;
         } else {
           document.getElementById('login-status').innerText = response.message;
-          document.getElementById('login-status').style.color = '#F44336'; 
         }
       }
 
       async function submitData() {
-        const phone = document.getElementById('phone').value;
+        const phoneRaw = document.getElementById('phone').value.replace(/\D/g, '');
         const billing = document.getElementById('billing').value;
-        const amount = document.getElementById('amount').value;
+        const amountRaw = document.getElementById('amount').value.replace(/\D/g, '');
         const statusBox = document.getElementById('submit-status');
         
-        if (!phone || !billing || !amount) {
-           statusBox.innerText = 'Please fill all three fields.';
+        if (phoneRaw.length !== 10) {
+           statusBox.innerText = 'Phone must be 10 digits.';
            statusBox.style.color = '#F44336';
            return;
         }
 
-        if (phone.length !== 10) {
-           statusBox.innerText = 'Phone number must be exactly 10 digits.';
-           statusBox.style.color = '#F44336';
-           return;
-        }
-
-        statusBox.innerText = 'Pushing data to secure server...';
+        statusBox.innerText = 'Syncing...';
         statusBox.style.color = '#00B900'; 
         
         const response = await sendToAPI({
           action: 'submit',
           passcode: currentPasscode,
-          phone: phone,
+          phone: phoneRaw,
           billingId: billing,
-          amount: amount
+          amount: amountRaw
         });
 
         statusBox.innerText = response.message;
-        
         if(response.success) {
           document.getElementById('phone').value = '';
           document.getElementById('billing').value = '';
           document.getElementById('amount').value = '';
           setTimeout(() => { statusBox.innerText = ''; }, 3000);
-        } else {
-          statusBox.style.color = '#F44336'; 
         }
       }
     </script>
