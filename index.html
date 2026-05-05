@@ -8,35 +8,79 @@
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
       body { background-color: #F9FAFB; color: #111827; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-      .container { background: #FFFFFF; padding: 48px 32px; border-radius: 24px; width: 100%; max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #F3F4F6; }
-      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 8px; }
-      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; color: #111827; width: 100%; }
-      .refresh-btn { position: absolute; right: -5px; background: none; border: none; cursor: pointer; padding: 5px; display: flex; }
-      .refresh-icon { fill: #9CA3AF; width: 20px; height: 20px; transition: transform 0.4s; }
+      
+      .container { 
+        background: #FFFFFF; 
+        padding: 48px 32px; 
+        border-radius: 24px; 
+        width: 100%; 
+        max-width: 420px; 
+        box-shadow: 0 12px 40px rgba(0,0,0,0.04); 
+        border: 1px solid #F3F4F6;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Ensures everything is centered horizontally */
+      }
+
+      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 8px; width: 100%; }
+      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #111827; text-align: center; }
+      
+      .refresh-btn { position: absolute; right: -10px; background: none; border: none; cursor: pointer; padding: 10px; display: flex; }
+      .refresh-icon { fill: #9CA3AF; width: 18px; height: 18px; transition: transform 0.4s; }
       .refresh-icon.spinning { animation: spin 0.8s linear infinite; }
       @keyframes spin { 100% { transform: rotate(360deg); } }
-      .user-meta { text-align: center; margin-bottom: 32px; font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.2px; }
-      input, select, .btn-primary, .btn-secondary { width: 100%; height: 56px; border-radius: 14px; font-size: 16px; font-weight: 600; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; text-align: center; text-align-last: center; transition: all 0.2s; border: 1.5px solid #F3F4F6; outline: none; margin-bottom: 16px; background: #FFF; appearance: none; }
+
+      .user-meta { text-align: center; margin-bottom: 32px; font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.2px; width: 100%; }
+
+      /* UI EXPERT STANDARDS: 56px height, 14px radius, perfect centering */
+      input, select, .btn-primary, .btn-secondary {
+        width: 100%;
+        height: 56px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        text-align-last: center;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1.5px solid #F3F4F6;
+        outline: none;
+        margin-bottom: 16px;
+        font-family: 'Inter', sans-serif;
+        background: #FFF;
+      }
+
       input:focus, select:focus { border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
       #passcode { letter-spacing: 0.9em; padding-left: 0.9em; font-weight: 700; }
-      .btn-primary { background: #00B900; color: #FFF; cursor: pointer; border: none; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15); }
+
+      .btn-primary { background: #00B900; color: #FFFFFF; cursor: pointer; border: none; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15); }
       .btn-primary:hover { background: #009900; transform: translateY(-1px); }
-      .btn-secondary { background: #F3F4F6; color: #4B5563; cursor: pointer; border: none; }
-      .history-section { margin-top: 32px; border-top: 1px solid #F3F4F6; padding-top: 24px; }
-      .history-title { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; text-align: center; }
-      .history-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F9FAFB; font-size: 13px; color: #4B5563; }
-      .history-value { font-weight: 700; color: #111827; }
-      #admin-dashboard, #points-form, #admin-branch-wrap { display: none; }
+
+      .btn-secondary { background: #F3F4F6; color: #4B5563; cursor: pointer; border: none; margin-bottom: 12px; }
+      .btn-secondary:hover { background: #E5E7EB; }
+
+      /* Dash & History List */
+      #admin-dashboard, #points-form, #admin-branch-wrap { display: none; width: 100%; }
       .branch-card { background: #FFF; border-radius: 16px; padding: 24px; margin-bottom: 16px; border: 1px solid #F3F4F6; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
       .branch-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 6px; }
       .branch-data { font-size: 12px; color: #6B7280; font-weight: 500; margin-bottom: 16px; }
-      .btn-export { width: 100%; height: 44px; background: #374151; color: #FFF; border-radius: 10px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; }
-      .status-text { text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
+      .btn-export { width: 100%; height: 44px; background: #374151; color: #FFF; border-radius: 10px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: background 0.2s; }
+      
+      .status-text { text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; width: 100%; }
+
+      .history-section { margin-top: 32px; border-top: 1px solid #F3F4F6; padding-top: 24px; width: 100%; }
+      .history-title { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; text-align: center; }
+      .history-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F9FAFB; font-size: 13px; color: #4B5563; }
+      .history-value { font-weight: 700; color: #111827; }
     </style>
   </head>
   <body>
     <div class="container">
-      <section id="login-section">
+      
+      <!-- LOGIN SECTION -->
+      <section id="login-section" style="width:100%;">
         <div class="header-area"><h2>Portal Access</h2></div>
         <p class="user-meta">Internal Secure Access</p>
         <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" maxlength="6">
@@ -44,8 +88,10 @@
         <div id="login-status" class="status-text" style="color: #EF4444;"></div>
       </section>
 
+      <!-- ADMIN DASHBOARD -->
       <section id="admin-dashboard">
-        <div class="header-area"><h2>Master Dashboard</h2>
+        <div class="header-area">
+          <h2>Master Dashboard</h2>
           <button class="refresh-btn" onclick="loadAdminData()"><svg class="refresh-icon" id="refresh-svg" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
         </div>
         <p class="user-meta" id="admin-meta"></p>
@@ -54,6 +100,7 @@
         <button class="btn-secondary" style="background:none; border:1.5px solid #F3F4F6;" onclick="location.reload()">LOGOUT</button>
       </section>
 
+      <!-- INTAKE FORM -->
       <section id="points-form">
         <div class="header-area"><h2>Add Points</h2></div>
         <p class="user-meta" id="active-user-meta"></p>
@@ -66,18 +113,17 @@
         <div id="submit-status" class="status-text"></div>
         <div class="history-section" id="session-history-wrap" style="display:none;"><p class="history-title">Session History</p><div id="history-list"></div></div>
       </section>
+
     </div>
 
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '', userRole = '', sessionHistory = [];
 
-      function loadXLSX(callback) {
-        if (window.XLSX) return callback();
-        const script = document.createElement('script');
-        script.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
-        script.onload = callback;
-        document.head.appendChild(script);
+      function loadXLSX(cb) {
+        if (window.XLSX) return cb();
+        const s = document.createElement('script'); s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+        s.onload = cb; document.head.appendChild(s);
       }
 
       document.getElementById('phone').addEventListener('input', e => {
@@ -86,8 +132,7 @@
       });
 
       document.getElementById('amount').addEventListener('input', e => {
-        let val = e.target.value.replace(/\D/g, '');
-        e.target.value = val ? Number(val).toLocaleString() : "";
+        let v = e.target.value.replace(/\D/g, ''); e.target.value = v ? Number(v).toLocaleString() : "";
       });
 
       async function api(p) { return (await fetch(API_URL, {method:'POST', body: JSON.stringify(p)})).json(); }
@@ -95,34 +140,68 @@
       async function login() {
         const code = document.getElementById('passcode').value;
         if(!code) return;
-        document.getElementById('login-status').innerText = 'Syncing...';
+        document.getElementById('login-status').innerText = 'Authenticating...';
+        document.getElementById('login-status').style.color = '#9CA3AF';
+        
         const res = await api({ action: 'login', passcode: code });
+        
         if (res.success) {
           currentPasscode = code; userRole = res.role;
           document.getElementById('login-section').style.display = 'none';
+          
           if (res.role === 'Admin') {
-            const bRes = await api({ action: 'getBranches' });
+            // RENDER DASHBOARD IMMEDIATELY WITH BUNDLED DATA
             const sel = document.getElementById('branch-override');
             sel.innerHTML = '<option value="">-- SELECT BRANCH --</option>';
-            bRes.branches.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
-            showAdmin(res.name);
-          } else showIntake(res.name, res.branch);
-        } else document.getElementById('login-status').innerText = res.message;
+            res.branchList.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
+            
+            renderDashboard(res.adminData);
+            document.getElementById('admin-dashboard').style.display = 'block';
+            document.getElementById('admin-meta').innerText = `${res.name} • Master Dashboard`;
+          } else {
+            showIntake(res.name, res.branch);
+          }
+        } else {
+          document.getElementById('login-status').innerText = res.message;
+          document.getElementById('login-status').style.color = '#EF4444';
+        }
       }
 
-      function showAdmin(n) { document.getElementById('admin-dashboard').style.display = 'block'; document.getElementById('points-form').style.display = 'none'; document.getElementById('admin-meta').innerText = `${n} • Master Dashboard`; loadAdminData(); }
-      function showIntake(n, b) { document.getElementById('points-form').style.display = 'block'; document.getElementById('admin-dashboard').style.display = 'none'; document.getElementById('active-user-meta').innerText = `${n} • ${b}`; if (userRole === 'Admin') { document.getElementById('back-btn').style.display = 'flex'; document.getElementById('admin-branch-wrap').style.display = 'block'; } }
-      function toggleView() { if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Mode", "HQ"); else showAdmin("Admin Mode"); }
+      function renderDashboard(summary) {
+        const list = document.getElementById('branch-list'); list.innerHTML = "";
+        if (!summary || Object.keys(summary).length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:#D1D5DB; font-size:13px;'>Pending list clear.</p>"; return; }
+        for (let b in summary) {
+          const s = summary[b];
+          list.innerHTML += `<div class="branch-card"><div class="branch-title">${b}</div><div class="branch-data">${s.count} Orders • ฿${s.total.toLocaleString()}</div><button class="btn-export" onclick="prepareExcel('${b}')">GENERATE EXCEL</button></div>`;
+        }
+      }
 
       async function loadAdminData() {
         const icon = document.getElementById('refresh-svg'); icon.classList.add('spinning');
-        const res = await api({ action: 'getAdminData' }); icon.classList.remove('spinning');
-        const list = document.getElementById('branch-list'); list.innerHTML = "";
-        if (!res.summary || Object.keys(res.summary).length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:#D1D5DB; font-size:13px;'>Pending list clear.</p>"; return; }
-        for (let b in res.summary) {
-          const s = res.summary[b];
-          list.innerHTML += `<div class="branch-card"><div class="branch-title">${b}</div><div class="branch-data">${s.count} Orders • ฿${s.total.toLocaleString()}</div><button class="btn-export" onclick="prepareExcel('${b}')">GENERATE EXCEL</button></div>`;
+        const res = await api({ action: 'getAdminData' });
+        icon.classList.remove('spinning');
+        renderDashboard(res.summary);
+      }
+
+      function showIntake(n, b) { 
+        document.getElementById('points-form').style.display = 'block'; 
+        document.getElementById('admin-dashboard').style.display = 'none'; 
+        document.getElementById('active-user-meta').innerText = `${n} • ${b}`; 
+        if (userRole === 'Admin') {
+          document.getElementById('back-btn').style.display = 'flex';
+          document.getElementById('admin-branch-wrap').style.display = 'block';
         }
+      }
+
+      function toggleView() {
+        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Session", "HQ");
+        else showAdminUI();
+      }
+
+      function showAdminUI() {
+        document.getElementById('admin-dashboard').style.display = 'block';
+        document.getElementById('points-form').style.display = 'none';
+        loadAdminData();
       }
 
       function prepareExcel(branch) {
