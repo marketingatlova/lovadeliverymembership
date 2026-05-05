@@ -7,29 +7,56 @@
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
       body { background-color: #F8F9FA; color: #2D3436; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      .container { background: #FFFFFF; padding: 45px 30px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
       
-      h2 { text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; }
-      .user-info { text-align: center; margin-bottom: 25px; font-size: 11px; color: #adb5bd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+      .container { background: #FFFFFF; padding: 45px 30px; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #E9ECEF; position: relative; }
+      
+      /* Header & Refresh Icon Vector */
+      .header-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px; position: relative; }
+      h2 { margin: 0; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; }
+      
+      .refresh-vector { cursor: pointer; width: 20px; height: 20px; fill: #adb5bd; transition: all 0.3s ease; }
+      .refresh-vector:hover { fill: #00B900; transform: rotate(180deg); }
+      .refresh-vector.loading { animation: spin 1s linear infinite; }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
 
-      input { width: 100%; padding: 16px; margin-bottom: 15px; background: #FFFFFF; border: 1.5px solid #E9ECEF; color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; border-radius: 10px; transition: all 0.2s ease; text-align: center; }
+      .user-info { text-align: center; margin-bottom: 30px; font-size: 11px; color: #adb5bd; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+
+      /* Uniform Entry & Button Geometry */
+      input, .action-btn, .secondary-btn { 
+        width: 100%; 
+        height: 56px; 
+        border-radius: 12px; 
+        font-family: 'Inter', sans-serif; 
+        font-size: 16px; 
+        font-weight: 600; 
+        transition: all 0.2s ease; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        border: none;
+        appearance: none;
+      }
+
+      input { background: #FFFFFF; border: 1.5px solid #E9ECEF; color: #1A1A1A; text-align: center; }
       input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
-      #passcode { letter-spacing: 0.9em; padding-left: 1.4em; font-weight: 600; }
+      #passcode { letter-spacing: 0.9em; padding-left: 1.4em; }
 
-      button { width: 100%; padding: 18px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; margin-top: 5px; }
-      button:hover { background: #009900; }
+      .action-btn { background: #00B900; color: #FFFFFF; cursor: pointer; margin-top: 10px; }
+      .action-btn:hover { background: #009900; }
+      
+      .secondary-btn { background: #F1F3F5; color: #495057; cursor: pointer; margin-top: 0; margin-bottom: 12px; }
+      .secondary-btn:hover { background: #E9ECEF; }
 
       #points-form, #admin-dashboard { display: none; }
 
-      /* Admin Card Detail Styling */
-      .admin-card { background: #FFFFFF; padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #F1F3F5; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-      .branch-name { font-weight: 700; font-size: 14px; color: #1A1A1A; }
-      .branch-stats { font-size: 12px; color: #868E96; font-weight: 500; }
-      .export-btn { width: 100%; padding: 10px; font-size: 12px; background: #343A40; margin-top: 5px; }
+      /* Admin Card Styling */
+      .admin-card { background: #FFFFFF; padding: 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #F1F3F5; display: flex; flex-direction: column; gap: 4px; }
+      .branch-name { font-weight: 700; font-size: 15px; color: #1A1A1A; }
+      .branch-stats { font-size: 13px; color: #868E96; font-weight: 500; margin-bottom: 12px; }
+      .export-btn { height: 44px; font-size: 13px; background: #343A40; color: white; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
       
       .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
-      .secondary-btn { background: #F1F3F5; color: #495057; font-size: 12px; padding: 12px; margin-top: 15px; font-weight: 600; }
-      .refresh-btn { background: #E9ECEF; color: #212529; font-size: 12px; padding: 12px; margin-top: 10px; font-weight: 600; border: 1px solid #DEE2E6; }
     </style>
   </head>
   <body>
@@ -37,33 +64,36 @@
       
       <!-- Login Section -->
       <div id="login-section">
-        <h2>System Access</h2>
-        <div class="user-info">Secure Internal Portal</div>
+        <div class="header-wrapper"><h2>Portal Access</h2></div>
+        <div class="user-info">Internal Authentication</div>
         <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" maxlength="6">
-        <button onclick="login()">UNLOCK SYSTEM</button>
+        <button class="action-btn" onclick="login()">UNLOCK SYSTEM</button>
         <div id="login-status" class="status" style="color: #E63946;"></div>
       </div>
 
       <!-- Admin Dashboard -->
       <div id="admin-dashboard">
-        <h2>Master Dashboard</h2>
+        <div class="header-wrapper">
+          <h2>Master Dashboard</h2>
+          <!-- Refresh Vector Icon -->
+          <svg class="refresh-vector" id="refresh-icon" onclick="loadAdminData()" viewBox="0 0 24 24">
+            <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </div>
         <div class="user-info" id="admin-info"></div>
         <div id="branch-list"></div>
-        
-        <!-- Refresh and Toggle Controls -->
-        <button class="refresh-btn" onclick="loadAdminData()">REFRESH LIVE DATA</button>
-        <button class="secondary-btn" onclick="toggleView()">ADD POINTS MANUALLY</button>
-        <button class="secondary-btn" style="background:#FFF; border:1px solid #DEE2E6;" onclick="location.reload()">LOGOUT</button>
+        <button class="secondary-btn" style="margin-top:20px;" onclick="toggleView()">ADD POINTS MANUALLY</button>
+        <button class="secondary-btn" style="background:transparent; border:1px solid #DEE2E6;" onclick="location.reload()">LOGOUT</button>
       </div>
 
       <!-- Point Intake Form -->
       <div id="points-form">
-        <h2 id="form-title">Add Points</h2>
+        <div class="header-wrapper"><h2 id="form-title">Add Points</h2></div>
         <div id="active-user" class="user-info"></div>
         <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
         <input type="text" id="billing" placeholder="Order ID / Billing ID">
         <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
-        <button onclick="submitData()">CONFIRM TRANSACTION</button>
+        <button class="action-btn" onclick="submitData()">CONFIRM TRANSACTION</button>
         <button id="back-to-admin" class="secondary-btn" style="display:none;" onclick="toggleView()">BACK TO DASHBOARD</button>
         <div id="submit-status" class="status"></div>
       </div>
@@ -75,7 +105,6 @@
       let currentPasscode = '';
       let userRole = '';
 
-      // Input Masking
       document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
@@ -98,11 +127,8 @@
           currentPasscode = code;
           userRole = res.role;
           document.getElementById('login-section').style.display = 'none';
-          if (res.role === 'Admin') {
-            showAdmin(res.name);
-          } else {
-            showIntake(res.name, res.branch);
-          }
+          if (res.role === 'Admin') showAdmin(res.name);
+          else showIntake(res.name, res.branch);
         } else document.getElementById('login-status').innerText = res.message;
       }
 
@@ -121,20 +147,21 @@
       }
 
       function toggleView() {
-        const isAdminVisible = document.getElementById('admin-dashboard').style.display === 'block';
-        if (isAdminVisible) showIntake("Admin Mode", "HQ");
+        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Mode", "HQ");
         else showAdmin("Admin Mode");
       }
 
       async function loadAdminData() {
+        const icon = document.getElementById('refresh-icon');
         const list = document.getElementById('branch-list');
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:#adb5bd; font-size:11px; font-weight:600; letter-spacing:1px;'>FETCHING LATEST DATA...</div>";
+        icon.classList.add('loading');
         
         const res = await api({ action: 'getAdminData' });
+        icon.classList.remove('loading');
         list.innerHTML = "";
         
         if (Object.keys(res.summary).length === 0) {
-          list.innerHTML = "<div style='text-align:center; padding:30px; color:#adb5bd; font-size:12px;'>All orders have been exported.</div>";
+          list.innerHTML = "<div style='text-align:center; padding:30px; color:#adb5bd; font-size:13px;'>All orders exported.</div>";
           return;
         }
 
@@ -158,7 +185,6 @@
           const a = document.createElement('a');
           a.href = url; a.download = `${branch}_Points.csv`;
           a.click(); 
-          // Auto-refresh after export to update counts
           setTimeout(loadAdminData, 1000);
         }
       }
@@ -170,9 +196,7 @@
         const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a });
         document.getElementById('submit-status').innerText = res.message;
         if(res.success) {
-           document.getElementById('phone').value = ''; 
-           document.getElementById('billing').value = ''; 
-           document.getElementById('amount').value = '';
+           document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
            setTimeout(() => document.getElementById('submit-status').innerText = '', 3000);
         }
       }
