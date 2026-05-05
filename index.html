@@ -4,161 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LOVA Points Portal</title>
+    <!-- Professional Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <!-- SheetJS Library for Professional .xlsx Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-      /* --- Expert UI Reset --- */
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; margin: 0; padding: 0; }
-      
-      body { 
-        background-color: #F9FAFB; 
-        color: #1F2937; 
-        font-family: 'Inter', sans-serif; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        min-height: 100vh; 
-        padding: 20px;
-      }
-      
-      .container { 
-        background: #FFFFFF; 
-        padding: 48px 32px; 
-        border-radius: 24px; 
-        width: 100%; 
-        max-width: 420px; 
-        box-shadow: 0 12px 40px rgba(0,0,0,0.04); 
-        border: 1px solid #F3F4F6;
-      }
+      body { background-color: #F9FAFB; color: #1F2937; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+      .container { background: #FFFFFF; padding: 48px 32px; border-radius: 24px; width: 100%; max-width: 420px; box-shadow: 0 12px 40px rgba(0,0,0,0.04); border: 1px solid #F3F4F6; }
 
-      /* --- Professional Header Hierarchy --- */
-      .header-area { 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        position: relative; 
-        margin-bottom: 6px; 
-      }
+      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 6px; }
+      h2 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #111827; text-align: center; }
       
-      h2 { 
-        font-family: 'Montserrat', sans-serif; 
-        font-size: 20px; 
-        font-weight: 700; 
-        text-transform: uppercase; 
-        letter-spacing: 1.5px; 
-        color: #111827; 
-        text-align: center;
-      }
-
-      .refresh-btn {
-        position: absolute;
-        right: -10px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
+      .refresh-btn { position: absolute; right: -10px; background: none; border: none; cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; }
       .refresh-icon { fill: #9CA3AF; width: 18px; height: 18px; transition: transform 0.4s ease, fill 0.2s; }
       .refresh-btn:hover .refresh-icon { fill: #00B900; transform: rotate(180deg); }
       .refresh-icon.spinning { animation: spin 0.8s linear infinite; }
       @keyframes spin { 100% { transform: rotate(360deg); } }
 
-      .user-meta { 
-        text-align: center; 
-        margin-bottom: 32px; 
-        font-size: 11px; 
-        font-weight: 600; 
-        color: #9CA3AF; 
-        text-transform: uppercase; 
-        letter-spacing: 1.2px; 
-      }
+      .user-meta { text-align: center; margin-bottom: 32px; font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.2px; }
 
-      /* --- Standardized Component Geometry (56px Height) --- */
-      input, .btn-primary, .btn-secondary {
-        width: 100%;
-        height: 56px;
-        border-radius: 14px;
-        font-size: 16px;
-        font-weight: 600;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        border: none;
-        outline: none;
-        margin-bottom: 16px;
-        font-family: 'Inter', sans-serif;
-      }
-
-      input { 
-        background: #FDFDFD; 
-        border: 1.5px solid #F3F4F6; 
-        color: #111827;
-      }
+      input, .btn-primary, .btn-secondary { width: 100%; height: 56px; border-radius: 14px; font-size: 16px; font-weight: 600; display: flex; justify-content: center; align-items: center; text-align: center; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: none; outline: none; margin-bottom: 16px; font-family: 'Inter', sans-serif; }
+      input { background: #FDFDFD; border: 1.5px solid #F3F4F6; color: #111827; }
       input:focus { border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); background: #FFF; }
-      input::placeholder { color: #D1D5DB; font-weight: 400; }
-      
-      /* Specific PIN spacing */
       #passcode { letter-spacing: 0.9em; padding-left: 0.9em; font-weight: 700; }
 
-      .btn-primary { 
-        background: #00B900; 
-        color: #FFFFFF; 
-        cursor: pointer; 
-        margin-top: 8px; 
-        box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15);
-      }
+      .btn-primary { background: #00B900; color: #FFFFFF; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.15); }
       .btn-primary:hover { background: #009900; transform: translateY(-1px); }
+      .btn-secondary { background: #F3F4F6; color: #4B5563; cursor: pointer; margin-bottom: 12px; }
 
-      .btn-secondary { 
-        background: #F3F4F6; 
-        color: #4B5563; 
-        cursor: pointer;
-        margin-bottom: 12px;
-      }
-      .btn-secondary:hover { background: #E5E7EB; }
-
-      /* --- Admin Card Layout --- */
       #admin-dashboard, #points-form { display: none; }
-      .branch-card {
-        background: #FFFFFF;
-        border: 1px solid #F3F4F6;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 16px;
-        display: flex;
-        flex-direction: column;
-      }
-      .branch-info-row { margin-bottom: 12px; }
+      .branch-card { background: #FFFFFF; border: 1px solid #F3F4F6; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
       .branch-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px; }
-      .branch-data { font-size: 12px; font-weight: 500; color: #6B7280; }
+      .branch-data { font-size: 12px; font-weight: 500; color: #6B7280; margin-bottom: 12px; }
+      .btn-export { width: 100%; height: 42px; background: #374151; color: white; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
       
-      .btn-export {
-        width: 100%;
-        height: 42px;
-        background: #374151;
-        color: white;
-        border-radius: 10px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        transition: background 0.2s;
-      }
-      .btn-export:hover { background: #1F2937; }
-
       .status-text { text-align: center; margin-top: 16px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
     </style>
   </head>
   <body>
-
     <div class="container">
-      
-      <!-- 01. LOGIN -->
       <section id="login-section">
         <div class="header-area"><h2>Portal Access</h2></div>
         <p class="user-meta">Internal Secure Access</p>
@@ -167,7 +52,6 @@
         <div id="login-status" class="status-text" style="color: #EF4444;"></div>
       </section>
 
-      <!-- 02. MASTER DASHBOARD -->
       <section id="admin-dashboard">
         <div class="header-area">
           <h2>Master Dashboard</h2>
@@ -181,9 +65,8 @@
         <button class="btn-secondary" style="background:none; border:1.5px solid #F3F4F6;" onclick="location.reload()">LOGOUT</button>
       </section>
 
-      <!-- 03. INTAKE FORM -->
       <section id="points-form">
-        <div class="header-area"><h2 id="form-title">Add Points</h2></div>
+        <div class="header-area"><h2>Add Points</h2></div>
         <p class="user-meta" id="active-user-meta"></p>
         <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
         <input type="text" id="billing" placeholder="Order ID / Billing ID">
@@ -192,7 +75,6 @@
         <button id="back-btn" class="btn-secondary" style="display:none;" onclick="toggleView()">BACK TO DASHBOARD</button>
         <div id="submit-status" class="status-text"></div>
       </section>
-
     </div>
 
     <script>
@@ -200,7 +82,6 @@
       let currentPasscode = '';
       let userRole = '';
 
-      // Clean Number Inputs & Formatting
       document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
@@ -218,78 +99,38 @@
 
       async function login() {
         const code = document.getElementById('passcode').value;
-        const status = document.getElementById('login-status');
-        status.innerText = 'Verifying...';
-        status.style.color = '#9CA3AF';
-
         const res = await api({ action: 'login', passcode: code });
         if (res.success) {
-          currentPasscode = code;
-          userRole = res.role;
+          currentPasscode = code; userRole = res.role;
           document.getElementById('login-section').style.display = 'none';
-          if (res.role === 'Admin') showAdmin(res.name);
-          else showIntake(res.name, res.branch);
-        } else {
-          status.innerText = res.message;
-          status.style.color = '#EF4444';
-        }
+          if (res.role === 'Admin') showAdmin(res.name); else showIntake(res.name, res.branch);
+        } else { document.getElementById('login-status').innerText = res.message; }
       }
 
-      function showAdmin(name) {
-        document.getElementById('admin-dashboard').style.display = 'block';
-        document.getElementById('points-form').style.display = 'none';
-        document.getElementById('admin-meta').innerText = `${name} • HQ Master Access`;
-        loadAdminData();
-      }
-
-      function showIntake(name, branch) {
-        document.getElementById('points-form').style.display = 'block';
-        document.getElementById('admin-dashboard').style.display = 'none';
-        document.getElementById('active-user-meta').innerText = `${name} • ${branch}`;
-        if (userRole === 'Admin') document.getElementById('back-btn').style.display = 'flex';
-      }
-
-      function toggleView() {
-        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Session", "HQ");
-        else showAdmin("Admin Session");
-      }
+      function showAdmin(n) { document.getElementById('admin-dashboard').style.display = 'block'; document.getElementById('points-form').style.display = 'none'; document.getElementById('admin-meta').innerText = `${n} • Master Dashboard`; loadAdminData(); }
+      function showIntake(n, b) { document.getElementById('points-form').style.display = 'block'; document.getElementById('admin-dashboard').style.display = 'none'; document.getElementById('active-user-meta').innerText = `${n} • ${b}`; if (userRole === 'Admin') document.getElementById('back-btn').style.display = 'flex'; }
+      function toggleView() { if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Mode", "HQ"); else showAdmin("Admin Mode"); }
 
       async function loadAdminData() {
-        const icon = document.getElementById('refresh-svg');
-        const list = document.getElementById('branch-list');
-        icon.classList.add('spinning');
-        
-        const res = await api({ action: 'getAdminData' });
-        icon.classList.remove('spinning');
-        list.innerHTML = "";
-        
-        if (!res.summary || Object.keys(res.summary).length === 0) {
-          list.innerHTML = "<div style='text-align:center; padding:40px; color:#D1D5DB; font-size:13px; font-weight:500;'>All transactions have been exported.</div>";
-          return;
-        }
-
+        const icon = document.getElementById('refresh-svg'); icon.classList.add('spinning');
+        const res = await api({ action: 'getAdminData' }); icon.classList.remove('spinning');
+        const list = document.getElementById('branch-list'); list.innerHTML = "";
+        if (!res.summary || Object.keys(res.summary).length === 0) { list.innerHTML = "<div style='text-align:center; padding:40px; color:#D1D5DB; font-size:13px;'>No pending orders.</div>"; return; }
         for (let b in res.summary) {
           const s = res.summary[b];
-          list.innerHTML += `
-            <div class="branch-card">
-              <div class="branch-info-row">
-                <div class="branch-title">${b}</div>
-                <div class="branch-data">${s.count} Orders • ฿${s.total.toLocaleString()}</div>
-              </div>
-              <button class="btn-export" onclick="downloadCSV('${b}')">GENERATE CSV</button>
-            </div>`;
+          list.innerHTML += `<div class="branch-card"><div class="branch-title">${b}</div><div class="branch-data">${s.count} Orders • ฿${s.total.toLocaleString()}</div><button class="btn-export" onclick="downloadExcel('${b}')">GENERATE EXCEL</button></div>`;
         }
       }
 
-      async function downloadCSV(branch) {
+      async function downloadExcel(branch) {
         const res = await api({ action: 'exportBranch', branchName: branch });
         if (res.success) {
-          let csv = "Phone Number,Billing ID,Money Amount\n" + res.csvData.map(r => r.join(",")).join("\n");
-          const blob = new Blob([csv], { type: 'text/csv' });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = `${branch}_Upload.csv`;
-          a.click(); 
+          const headers = ["Phone Number", "Billing ID", "Money Amount"];
+          const data = [headers, ...res.csvData];
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Points");
+          XLSX.writeFile(wb, `${branch}_Upload.xlsx`);
           setTimeout(loadAdminData, 1000);
         }
       }
@@ -299,18 +140,11 @@
         const b = document.getElementById('billing').value;
         const a = document.getElementById('amount').value.replace(/\D/g, '');
         const status = document.getElementById('submit-status');
-        
-        if (p.length !== 10) { status.innerText = 'Invalid Phone Number'; status.style.color = '#EF4444'; return; }
-
-        status.innerText = 'Syncing...';
-        status.style.color = '#00B900';
-        
+        if (p.length !== 10) { status.innerText = 'Invalid Phone'; status.style.color = '#EF4444'; return; }
+        status.innerText = 'Syncing...'; status.style.color = '#00B900';
         const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a });
         status.innerText = res.message;
-        if(res.success) {
-           document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
-           setTimeout(() => status.innerText = '', 3000);
-        }
+        if(res.success) { document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = ''; setTimeout(() => status.innerText = '', 3000); }
       }
     </script>
   </body>
