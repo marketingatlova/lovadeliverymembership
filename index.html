@@ -6,41 +6,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
       * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-      
       body { background-color: #F8F9FA; color: #2D3436; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-      
-      .container { background: #FFFFFF; padding: 45px 30px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
-      
-      #login-section { display: flex; flex-direction: column; align-items: center; }
-      
-      /* Header: Bold Montserrat for a premium "One Bangkok" feel */
-      h2 { text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; }
-      
-      /* Hierarchy: Metadata is secondary, smaller, and lighter weight */
-      .user-info { text-align: center; margin-bottom: 30px; font-size: 12px; color: #adb5bd; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-
-      /* Inputs: Using Inter Medium for a professional, firm look */
-      input { width: 100%; padding: 16px; margin-bottom: 18px; background: #FFFFFF; border: 1.5px solid #E9ECEF; color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; border-radius: 10px; transition: all 0.2s ease; appearance: none; text-align: center; }
-      
-      input::placeholder { color: #CED4DA; font-weight: 400; }
+      .container { background: #FFFFFF; padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #E9ECEF; }
+      h2 { text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; color: #111111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; }
+      .user-info { text-align: center; margin-bottom: 25px; font-size: 11px; color: #adb5bd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+      input { width: 100%; padding: 16px; margin-bottom: 15px; background: #FFFFFF; border: 1.5px solid #E9ECEF; color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; border-radius: 10px; transition: all 0.2s ease; text-align: center; }
       input:focus { outline: none; border-color: #00B900; box-shadow: 0 0 0 4px rgba(0, 185, 0, 0.08); }
-      
-      /* PINCODE: Bold dots with wide spacing */
       #passcode { letter-spacing: 0.9em; padding-left: 1.4em; font-weight: 600; }
-      
-      /* Button: Bold Semi-Bold weight for clear action hierarchy */
-      button { width: 100%; padding: 18px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; appearance: none; margin-top: 10px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0, 185, 0, 0.2); }
-      
-      button:hover { background: #009900; transform: translateY(-1px); }
-      button:active { transform: translateY(0); }
-      
-      #points-form { display: none; }
-      .status { text-align: center; margin-top: 20px; font-size: 13px; font-weight: 600; color: #00B900; min-height: 20px; }
+      button { width: 100%; padding: 18px; background: #00B900; color: #FFFFFF; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; margin-top: 5px; letter-spacing: 0.5px; }
+      button:hover { background: #009900; }
+      #points-form, #admin-dashboard { display: none; }
+      .admin-card { background: #F8F9FA; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #EEE; }
+      .admin-card span { font-weight: 600; font-size: 13px; }
+      .download-btn { width: auto; padding: 8px 12px; font-size: 11px; margin-top: 0; background: #333; }
+      .status { text-align: center; margin-top: 15px; font-size: 13px; font-weight: 600; color: #00B900; }
     </style>
   </head>
   <body>
     <div class="container">
-      
       <div id="login-section">
         <h2>System Access</h2>
         <div class="user-info">Secure Internal Portal</div>
@@ -49,93 +32,91 @@
         <div id="login-status" class="status" style="color: #E63946;"></div>
       </div>
 
+      <div id="admin-dashboard">
+        <h2>Admin Panel</h2>
+        <div class="user-info" id="admin-info"></div>
+        <div id="branch-list"></div>
+        <button onclick="location.reload()" style="background:#EEE; color:#666; margin-top:20px;">LOGOUT</button>
+      </div>
+
       <div id="points-form">
         <h2>Add Points</h2>
         <div id="active-user" class="user-info"></div>
-        
         <input type="tel" id="phone" placeholder="000-000-0000" maxlength="12">
         <input type="text" id="billing" placeholder="Order ID / Billing ID">
         <input type="text" id="amount" placeholder="Amount (THB)" inputmode="numeric">
-        
         <button onclick="submitData()">CONFIRM TRANSACTION</button>
         <div id="submit-status" class="status"></div>
       </div>
-
     </div>
 
     <script>
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '';
 
-      document.getElementById('phone').addEventListener('input', function (e) {
+      document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
         e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
       });
 
-      document.getElementById('amount').addEventListener('input', function (e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value === "") { e.target.value = ""; return; }
-        e.target.value = Number(value).toLocaleString();
+      document.getElementById('amount').addEventListener('input', e => {
+        let val = e.target.value.replace(/\D/g, '');
+        e.target.value = val ? Number(val).toLocaleString() : "";
       });
 
-      async function sendToAPI(payload) {
-        try {
-          const response = await fetch(API_URL, {
-            redirect: "follow",
-            method: 'POST',
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
-          });
-          return await response.json();
-        } catch (error) {
-          return { success: false, message: "Server connection failed." };
-        }
+      async function api(p) {
+        const r = await fetch(API_URL, {method:'POST', body: JSON.stringify(p)});
+        return r.json();
       }
 
       async function login() {
         const code = document.getElementById('passcode').value;
-        if (!code) return;
-        document.getElementById('login-status').innerText = 'Verifying...';
-        const response = await sendToAPI({ action: 'login', passcode: code });
-        if (response.success) {
+        const res = await api({ action: 'login', passcode: code });
+        if (res.success) {
           currentPasscode = code;
           document.getElementById('login-section').style.display = 'none';
-          document.getElementById('points-form').style.display = 'block';
-          document.getElementById('active-user').innerText = `${response.name} • ${response.branch}`;
-        } else {
-          document.getElementById('login-status').innerText = response.message;
+          if (res.role === 'Admin') {
+            document.getElementById('admin-dashboard').style.display = 'block';
+            document.getElementById('admin-info').innerText = `${res.name} • Master Dashboard`;
+            loadAdminData();
+          } else {
+            document.getElementById('points-form').style.display = 'block';
+            document.getElementById('active-user').innerText = `${res.name} • ${res.branch}`;
+          }
+        } else document.getElementById('login-status').innerText = res.message;
+      }
+
+      async function loadAdminData() {
+        const res = await api({ action: 'getAdminData' });
+        const list = document.getElementById('branch-list');
+        list.innerHTML = "";
+        for (let b in res.counts) {
+          list.innerHTML += `<div class="admin-card"><span>${b} (${res.counts[b]})</span>
+            <button class="download-btn" onclick="downloadCSV('${b}')">EXPORT</button></div>`;
+        }
+      }
+
+      async function downloadCSV(branch) {
+        const res = await api({ action: 'exportBranch', branchName: branch });
+        if (res.success) {
+          let csv = "Phone Number,Billing ID,Money Amount\n" + res.csvData.map(r => r.join(",")).join("\n");
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `${branch}_Points.csv`;
+          a.click(); loadAdminData();
         }
       }
 
       async function submitData() {
-        const phoneRaw = document.getElementById('phone').value.replace(/\D/g, '');
-        const billing = document.getElementById('billing').value;
-        const amountRaw = document.getElementById('amount').value.replace(/\D/g, '');
-        const statusBox = document.getElementById('submit-status');
-        
-        if (phoneRaw.length !== 10) {
-           statusBox.innerText = 'Invalid Phone Number Format';
-           statusBox.style.color = '#E63946';
-           return;
-        }
-
-        statusBox.innerText = 'Transmitting...';
-        statusBox.style.color = '#00B900'; 
-        
-        const response = await sendToAPI({
-          action: 'submit',
-          passcode: currentPasscode,
-          phone: phoneRaw,
-          billingId: billing,
-          amount: amountRaw
-        });
-
-        statusBox.innerText = response.message;
-        if(response.success) {
-          document.getElementById('phone').value = '';
-          document.getElementById('billing').value = '';
-          document.getElementById('amount').value = '';
-          setTimeout(() => { statusBox.innerText = ''; }, 3000);
+        const p = document.getElementById('phone').value.replace(/\D/g, '');
+        const b = document.getElementById('billing').value;
+        const a = document.getElementById('amount').value.replace(/\D/g, '');
+        const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a });
+        document.getElementById('submit-status').innerText = res.message;
+        if(res.success) {
+           document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
+           setTimeout(() => document.getElementById('submit-status').innerText = '', 3000);
         }
       }
     </script>
