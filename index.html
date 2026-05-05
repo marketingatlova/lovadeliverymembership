@@ -12,13 +12,15 @@
       input:focus { outline: none; border-color: #888; }
       button { width: 100%; padding: 14px; background: #FFF; color: #000; border: none; font-family: 'Sora', sans-serif; font-weight: 600; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
       button:hover { background: #E0E0E0; }
-      #points-form, #admin-dashboard { display: none; }
+      #points-form { display: none; }
       .status { text-align: center; margin-top: 15px; font-size: 0.9em; font-family: 'Cascadia Mono', monospace; color: #4CAF50; }
       .user-info { text-align: center; margin-bottom: 20px; font-size: 0.85em; color: #AAA; }
     </style>
   </head>
   <body>
     <div class="container">
+      
+      <!-- Login Screen -->
       <div id="login-section">
         <h2>PORTAL ACCESS</h2>
         <input type="password" id="passcode" placeholder="Enter 6-Digit Code">
@@ -26,6 +28,7 @@
         <div id="login-status" class="status" style="color: #F44336;"></div>
       </div>
 
+      <!-- Point Intake Form -->
       <div id="points-form">
         <h2>ADD POINTS</h2>
         <div id="active-user" class="user-info"></div>
@@ -35,30 +38,38 @@
         <button onclick="submitData()">SUBMIT TO CRM</button>
         <div id="submit-status" class="status"></div>
       </div>
+
     </div>
 
     <script>
-      // Your deployment URL goes here
+      // Your active deployment URL
       const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
       let currentPasscode = '';
 
+      // The core communication bridge with the CORS bypass
       async function sendToAPI(payload) {
         try {
           const response = await fetch(API_URL, {
+            redirect: "follow",
             method: 'POST',
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
             body: JSON.stringify(payload)
           });
           return await response.json();
         } catch (error) {
-          return { success: false, message: "Network error. Try again." };
+          return { success: false, message: "Network error. Check your connection." };
         }
       }
 
+      // Login Logic
       async function login() {
         const code = document.getElementById('passcode').value;
         if (!code) return;
         
-        document.getElementById('login-status').innerText = 'Verifying...';
+        document.getElementById('login-status').innerText = 'Verifying with Database...';
+        document.getElementById('login-status').style.color = '#FFF';
         
         const response = await sendToAPI({ action: 'login', passcode: code });
         
@@ -69,22 +80,26 @@
           document.getElementById('active-user').innerText = `Active Session: ${response.name} | ${response.branch}`;
         } else {
           document.getElementById('login-status').innerText = response.message;
+          document.getElementById('login-status').style.color = '#F44336';
         }
       }
 
+      // Submit Points Logic
       async function submitData() {
         const phone = document.getElementById('phone').value;
         const billing = document.getElementById('billing').value;
         const amount = document.getElementById('amount').value;
+        const statusBox = document.getElementById('submit-status');
         
+        // Basic frontend validation to prevent empty submissions
         if (!phone || !billing || !amount) {
-           document.getElementById('submit-status').innerText = 'Please fill all fields.';
-           document.getElementById('submit-status').style.color = '#F44336';
+           statusBox.innerText = 'Please fill all three fields.';
+           statusBox.style.color = '#F44336';
            return;
         }
 
-        document.getElementById('submit-status').innerText = 'Pushing to database...';
-        document.getElementById('submit-status').style.color = '#4CAF50';
+        statusBox.innerText = 'Pushing data to secure server...';
+        statusBox.style.color = '#4CAF50';
         
         const response = await sendToAPI({
           action: 'submit',
@@ -94,15 +109,19 @@
           amount: amount
         });
 
-        document.getElementById('submit-status').innerText = response.message;
+        statusBox.innerText = response.message;
         
         if(response.success) {
+          // Clear fields for the next customer order
           document.getElementById('phone').value = '';
           document.getElementById('billing').value = '';
           document.getElementById('amount').value = '';
-          setTimeout(() => document.getElementById('submit-status').innerText = '', 3000);
+          
+          // Clear success message after 3 seconds
+          setTimeout(() => { statusBox.innerText = ''; }, 3000);
         } else {
-          document.getElementById('submit-status').style.color = '#F44336';
+          // Keep the error text red so staff notice it
+          statusBox.style.color = '#F44336';
         }
       }
     </script>
