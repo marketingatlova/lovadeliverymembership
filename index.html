@@ -1,375 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>หนอนหัวกระสุน | Report System</title>
+    <title>LOVA Points Portal</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- STACKED TYPOGRAPHY: Inter for English/Numbers, Noto Sans Thai for Thai characters -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- PREMIUM DESIGN UI RESET --- */
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; margin: 0; padding: 0; }
+      /* --- PREMIUM DESIGN UI RESET --- */
+      * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; margin: 0; padding: 0; }
+      
+      body { 
+        /* Clean, icy ambient background with subtle dot grid for glass refraction */
+        background-color: #E6EAEF;
+        background-image: 
+          radial-gradient(circle at top left, rgba(255,255,255,0.8) 0%, transparent 50%),
+          radial-gradient(circle at bottom right, rgba(200,210,225,0.5) 0%, transparent 50%),
+          radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 20px 20px;
+        color: #1D1D1F; 
+        font-family: 'Inter', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        padding: 20px;
+      }
+      
+      /* --- TRUE THICK LIQUID GLASS CONTAINER --- */
+      .container { 
+        background: rgba(255, 255, 255, 0.2); 
+        backdrop-filter: blur(32px) saturate(140%);
+        -webkit-backdrop-filter: blur(32px) saturate(140%);
         
-        body { 
-            background-color: #E6EAEF;
-            background-image: 
-                radial-gradient(circle at top left, rgba(255,255,255,0.9) 0%, transparent 60%),
-                radial-gradient(circle at bottom right, rgba(200,210,225,0.6) 0%, transparent 60%),
-                radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 20px 20px;
-            color: #1D1D1F; 
-            font-family: 'Inter', 'Noto Sans Thai', -apple-system, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 40px 20px;
-            overflow-x: hidden;
-        }
+        /* Adjusted top padding to give the title and buttons more breathing room */
+        padding: 56px 32px 44px 32px; 
+        border-radius: 32px; 
+        width: 100%; 
+        max-width: 420px; 
+        
+        /* Directional Lighting & Glass Thickness */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-top: 1.5px solid rgba(255, 255, 255, 0.9);
+        border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+        
+        box-shadow: 
+          0 24px 48px -12px rgba(0, 0, 0, 0.1), 
+          inset 0 4px 24px rgba(255, 255, 255, 0.4), 
+          inset 0 1px 1px rgba(255, 255, 255, 0.8); 
+          
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: height 0.3s ease;
+        position: relative;
+      }
 
-        /* --- AMBIENT BACKGROUND ORB (Makes the glass look alive) --- */
-        .ambient-orb {
-            position: fixed;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, rgba(255, 59, 48, 0.12) 0%, rgba(255, 59, 48, 0) 70%);
-            filter: blur(30px);
-            z-index: -1;
-            animation: breathe 8s ease-in-out infinite alternate;
-        }
+      /* Language Toggle Button - MOVED TO TOP LEFT */
+      .lang-toggle {
+        position: absolute;
+        top: 24px;
+        left: 24px; /* Fixes the overlap with the refresh button */
+        background: rgba(255,255,255,0.5);
+        border: 1px solid rgba(255,255,255,0.8);
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #1D1D1F;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      }
+      .lang-toggle:active { transform: scale(0.95); background: rgba(255,255,255,0.9); }
+      
+      /* Typography */
+      .header-area { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 4px; width: 100%; }
+      h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; color: #1D1D1F; text-align: center; }
+      
+      .refresh-btn { position: absolute; right: -8px; background: none; border: none; cursor: pointer; padding: 8px; outline: none; border-radius: 50%; transition: background 0.2s; }
+      .refresh-btn:hover { background: rgba(255,255,255,0.6); }
+      .refresh-icon { fill: #6E6E73; width: 20px; height: 20px; transition: transform 0.4s ease-out; }
+      .refresh-icon.spinning { animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; fill: #1D1D1F; }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+      
+      .user-meta { text-align: center; margin-bottom: 32px; font-size: 13px; font-weight: 500; color: #6E6E73; width: 100%; letter-spacing: -0.1px; }
+      
+      /* --- HIGH VISIBILITY INPUTS --- */
+      input, select { 
+        width: 100%; 
+        height: 56px; 
+        border-radius: 16px; 
+        font-size: 15px; 
+        font-weight: 500; 
+        font-family: inherit;
+        text-align: center; 
+        text-align-last: center; 
+        transition: all 0.2s ease; 
+        outline: none; 
+        margin-bottom: 16px; 
+        background: rgba(255, 255, 255, 0.9); 
+        border: 1px solid #FFFFFF;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        color: #1D1D1F;
+        appearance: none;
+      }
+      
+      input::placeholder { color: #86868B; font-weight: 400; }
+      input:focus, select:focus { 
+        background: #FFFFFF; 
+        border-color: #00C300; 
+        box-shadow: 0 0 0 4px rgba(0, 195, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04); 
+      }
+      #passcode { letter-spacing: 0.8em; padding-left: 0.8em; font-weight: 700; font-size: 18px; }
+      
+      .select-wrapper { width: 100%; position: relative; margin-bottom: 16px; }
+      select { margin-bottom: 0; cursor: pointer; color: #1D1D1F; }
+      .select-wrapper::after { content: "▼"; font-size: 10px; color: #86868B; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 
-        @keyframes breathe {
-            0% { transform: translateX(-60%) translateY(0) scale(1); }
-            100% { transform: translateX(-40%) translateY(30px) scale(1.1); }
-        }
+      /* --- BUTTONS --- */
+      .btn-primary, .btn-secondary {
+        width: 100%; 
+        height: 56px; 
+        border-radius: 16px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        font-family: inherit;
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        cursor: pointer; 
+        border: none; 
+        transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+      }
+      
+      /* SOLID DELIVERY GREEN BUTTON */
+      .btn-primary { 
+        background: #00C300; 
+        color: #FFFFFF; 
+        margin-top: 8px; 
+        box-shadow: 0 8px 20px rgba(0, 195, 0, 0.25);
+      }
+      .btn-primary:active { transform: scale(0.97); opacity: 0.9; box-shadow: 0 4px 10px rgba(0, 195, 0, 0.15); }
+      
+      .btn-secondary { 
+        background: rgba(255, 255, 255, 0.8); 
+        border: 1px solid #FFFFFF;
+        color: #1D1D1F; 
+        margin-bottom: 12px; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      }
+      .btn-secondary:active { transform: scale(0.97); background: #FFFFFF; }
+      .btn-logout { color: #FF3B30; }
 
-        /* --- HEADER --- */
-        .header-area {
-            text-align: center;
-            margin-bottom: 32px;
-            width: 100%;
-            max-width: 420px;
-            animation: iosFadeIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
+      /* --- VIEW STATES & ANIMATION --- */
+      #admin-dashboard, #points-form { display: none; width: 100%; animation: iosFadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+      @keyframes iosFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-area h1 {
-            font-size: 34px;
-            font-weight: 800;
-            letter-spacing: -0.8px;
-            color: #1D1D1F;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+      /* --- DASHBOARD LIST --- */
+      #branch-list { width: 100%; max-height: 400px; overflow-y: auto; margin-bottom: 24px; padding: 4px; }
+      #branch-list::-webkit-scrollbar { display: none; } 
+      
+      .branch-card { 
+        background: rgba(255, 255, 255, 0.85); 
+        border-radius: 20px; 
+        padding: 16px 20px; 
+        margin-bottom: 12px; 
+        border: 1px solid #FFFFFF;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04); 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .branch-info { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+      .branch-title { font-size: 15px; font-weight: 600; color: #1D1D1F; margin-bottom: 4px; letter-spacing: -0.3px; }
+      .branch-data { font-size: 13px; color: #6E6E73; font-weight: 400; }
+      
+      .btn-export { 
+        height: 36px; 
+        padding: 0 16px;
+        background: #F2F2F7; 
+        color: #00C300; 
+        border-radius: 18px; 
+        font-size: 13px; 
+        font-weight: 600; 
+        border: none;
+        cursor: pointer; 
+        transition: all 0.2s;
+        flex-shrink: 0; 
+      }
+      .btn-export:active { background: #E5E5EA; transform: scale(0.95); }
 
-        .header-area p {
-            font-size: 12px;
-            font-weight: 600;
-            color: #86868B;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-top: 6px;
-        }
-
-        /* --- TRUE THICK LIQUID GLASS CONTAINER --- */
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.35); /* More opaque for readability */
-            backdrop-filter: blur(40px) saturate(160%);
-            -webkit-backdrop-filter: blur(40px) saturate(160%);
-            
-            padding: 24px; 
-            border-radius: 32px; 
-            width: 100%; 
-            max-width: 420px; 
-            margin-bottom: 24px;
-            
-            /* Directional Lighting & Glass Thickness */
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-top: 1.5px solid rgba(255, 255, 255, 1);
-            border-left: 1.5px solid rgba(255, 255, 255, 0.8);
-            
-            box-shadow: 
-                0 24px 48px -12px rgba(0, 0, 0, 0.08), 
-                inset 0 4px 24px rgba(255, 255, 255, 0.5), 
-                inset 0 1px 1px rgba(255, 255, 255, 0.9); 
-                
-            animation: iosFadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        .card-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: #1D1D1F;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.3px;
-        }
-
-        /* --- REPORTING BUTTONS --- */
-        .user-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .btn-report { 
-            background: rgba(255, 255, 255, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            color: #1D1D1F; 
-            height: 56px; 
-            border-radius: 18px; 
-            font-size: 15px; 
-            font-weight: 600; 
-            font-family: inherit;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .btn-report:hover {
-            background: #FFFFFF;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-        }
-
-        .btn-report:active { 
-            transform: scale(0.94); 
-            background: #FF3B30;
-            color: white;
-            border-color: #FF3B30;
-            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
-        }
-
-        /* --- LEADERBOARD ROWS --- */
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 12px;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .row:last-child { border-bottom: none; }
-
-        .rank { 
-            width: 32px; 
-            color: #86868B; 
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .name { 
-            flex-grow: 1; 
-            font-weight: 600; 
-            font-size: 16px;
-            color: #1D1D1F;
-        }
-
-        .score { 
-            font-weight: 700; 
-            color: #FF3B30;
-            background: rgba(255, 59, 48, 0.1);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 15px;
-            min-width: 44px;
-            text-align: center;
-        }
-
-        /* Rank 1 Styling - Crown Winner */
-        .row:first-child .name { color: #FF3B30; font-weight: 700; }
-        .row:first-child .rank { color: #FF3B30; }
-        .row:first-child .score { background: #FF3B30; color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3); }
-
-        /* --- ALIGNED LOADING STATE --- */
-        .loading { 
-            grid-column: 1 / -1; /* Forces it to span both columns in the grid */
-            text-align: center; 
-            color: #86868B; 
-            padding: 30px 10px;
-            font-size: 14px;
-            font-weight: 500;
-            animation: pulse 1.5s infinite alternate;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        @keyframes pulse {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
-        }
-
-        /* --- NOTIFICATION PILL --- */
-        #notification {
-            position: fixed;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-30px);
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,1);
-            color: #1D1D1F;
-            padding: 14px 24px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #notification.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        @keyframes iosFadeIn { 
-            from { opacity: 0; transform: translateY(16px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+      /* --- ENHANCED TRANSACTION HISTORY --- */
+      .history-section { margin-top: 24px; width: 100%; }
+      .history-title { font-size: 14px; font-weight: 600; color: #1D1D1F; letter-spacing: -0.2px; margin-bottom: 16px; text-align: left; padding-top: 24px; border-top: 1px solid rgba(0,0,0,0.06); }
+      
+      .history-item { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 14px 16px; 
+        background: rgba(255,255,255,0.6);
+        border-radius: 16px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(255,255,255,0.8);
+      }
+      .history-details { display: flex; flex-direction: column; gap: 4px; }
+      .history-primary { font-size: 14px; font-weight: 600; color: #1D1D1F; display: flex; align-items: center; gap: 8px;}
+      .history-meta { font-size: 12px; color: #6E6E73; font-weight: 500; }
+      .history-amount { font-weight: 700; color: #1D1D1F; font-size: 15px; text-align: right; }
+      .history-time { font-size: 11px; color: #A1A1A6; font-weight: 500; margin-top: 4px; }
+      
+      .status-text { text-align: center; margin-top: 16px; font-size: 14px; font-weight: 500; min-height: 20px; width: 100%; transition: opacity 0.3s; }
+      .text-success { color: #00C300; }
+      .text-error { color: #FF3B30; }
+      .text-neutral { color: #6E6E73; }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="container">
+      
+      <!-- Language Toggle -->
+      <button class="lang-toggle" id="lang-toggle-btn" onclick="toggleLanguage()">TH</button>
 
-    <div class="ambient-orb"></div>
+      <!-- LOGIN SECTION -->
+      <section id="login-section" style="width: 100%;">
+        <div class="header-area"><h2 data-i18n="loginTitle">Delivery Portal Access</h2></div>
+        <p class="user-meta" data-i18n="loginSub">Internal System Authentication</p>
+        
+        <!-- iPad Numpad Fix Applied -->
+        <input type="password" id="passcode" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" maxlength="6">
+        
+        <button class="btn-primary" onclick="login()" data-i18n="loginBtn">Continue</button>
+        <div id="login-status" class="status-text text-error"></div>
+      </section>
 
-    <div id="notification">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00C300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        ส่งการแจ้งเตือนเข้ากลุ่มแล้ว
-    </div>
-
-    <div class="header-area">
-        <h1><span style="font-size: 40px; margin-right: 8px;">🪱</span> หนอนหัวกระสุน</h1>
-        <p>Secure Office Reporting System</p>
-    </div>
-
-    <div class="glass-card">
-        <div class="card-title">🚨 แจ้งจับคนปากแจ๋ว</div>
-        <div class="user-grid" id="user-buttons">
-            <div class="loading">Establishing secure connection...</div>
+      <!-- ADMIN DASHBOARD -->
+      <section id="admin-dashboard">
+        <div class="header-area">
+          <h2 data-i18n="dashTitle">Master Dashboard</h2>
+          <button class="refresh-btn" onclick="loadAdminData()"><svg class="refresh-icon" id="refresh-svg" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
         </div>
-    </div>
+        <p class="user-meta" id="admin-meta"></p>
+        
+        <div id="branch-list"></div>
 
-    <div class="glass-card" style="animation-delay: 0.1s;">
-        <div class="card-title">🏆 Hall of Shame</div>
-        <div id="leaderboard">
-            <div class="loading">Loading current stats...</div>
+        <button class="btn-secondary" onclick="toggleView()" data-i18n="addManualBtn">Add Points Manually</button>
+        <button class="btn-secondary btn-logout" style="margin-bottom:0;" onclick="location.reload()" data-i18n="signOutBtn">Sign Out</button>
+      </section>
+
+      <!-- INTAKE FORM -->
+      <section id="points-form">
+        <div class="header-area"><h2 data-i18n="addPointsTitle">Add Points</h2></div>
+        <p class="user-meta" id="active-user-meta"></p>
+        
+        <div id="admin-branch-wrap" style="display:none;">
+          <div class="select-wrapper">
+            <select id="branch-override"><option value="" data-i18n="selectDest">Select Destination</option></select>
+          </div>
         </div>
+        
+        <!-- iPad Numpad Fix Applied (Phone + Amount) -->
+        <input type="tel" id="phone" data-i18n="phonePlaceholder" placeholder="Phone Number" inputmode="numeric" pattern="[0-9]*" maxlength="12">
+        <input type="text" id="billing" data-i18n="billingPlaceholder" placeholder="Billing ID">
+        <input type="text" id="amount" data-i18n="amountPlaceholder" placeholder="Amount (THB)" inputmode="decimal" pattern="[0-9]*">
+        
+        <button class="btn-primary" onclick="submitData()" data-i18n="submitBtn">Submit Transaction</button>
+        
+        <button id="back-btn" class="btn-secondary" style="display:none; margin-top:12px;" onclick="toggleView()" data-i18n="backBtn">Back</button>
+        <button id="staff-signout" class="btn-secondary btn-logout" style="display:none; margin-top:12px;" onclick="location.reload()" data-i18n="signOutBtn">Sign Out</button>
+        
+        <div id="submit-status" class="status-text"></div>
+        
+        <div class="history-section" id="session-history-wrap" style="display:none;">
+          <p class="history-title" data-i18n="recentTrans">Recent Transactions</p>
+          <div id="history-list"></div>
+        </div>
+      </section>
+
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwEgjaUojKyKjg1LOUvpypPgNwhivOPFn9G1kjHQX9C9kUo7F7R-b1Hnx7aBsix_kgB/exec';
+      // YOUR EXACT API LINK
+      const API_URL = 'https://script.google.com/macros/s/AKfycbxc9ooiKrfd3rixvbAtZhRB6GKmrVswBNnHB47T0I_amruA_0DNkYc-DYB_NN5-LBEkXA/exec';
+      let currentPasscode = '', userRole = '', sessionHistory = [], currentSummary = null, currentBranchList = [];
+      let currentLang = 'en';
+
+      // --- TRANSLATION DICTIONARY ---
+      const i18n = {
+        en: {
+          loginTitle: "Delivery Portal Access",
+          loginSub: "Internal System Authentication",
+          loginBtn: "Continue",
+          dashTitle: "Master Dashboard",
+          emptyQueue: "All queues are up to date.",
+          addManualBtn: "Add Points Manually",
+          signOutBtn: "Sign Out",
+          addPointsTitle: "Add Points",
+          selectDest: "Select Destination",
+          phonePlaceholder: "Phone Number",
+          billingPlaceholder: "Billing ID",
+          amountPlaceholder: "Amount (THB)",
+          submitBtn: "Submit Transaction",
+          backBtn: "Back",
+          recentTrans: "Recent Transactions",
+          orders: "Orders",
+          export: "Export",
+          syncing: "Processing...",
+          success: "Transaction Successful"
+        },
+        th: {
+          loginTitle: "การเพิ่มคะแนนจาก Delivery",
+          loginSub: "สำหรับพนักงานเท่านั้น",
+          loginBtn: "เข้าสู่ระบบ",
+          dashTitle: "ภาพรวม",
+          emptyQueue: "ทำรายการครบถ้วนแล้ว",
+          addManualBtn: "เพิ่มพอยต์ด้วยตนเอง",
+          signOutBtn: "ออกจากระบบ",
+          addPointsTitle: "สะสมคะแนน",
+          selectDest: "เลือกสาขาที่ให้บริการ",
+          phonePlaceholder: "เบอร์โทรศัพท์ลูกค้า",
+          billingPlaceholder: "หมายเลขบิล / Order ID",
+          amountPlaceholder: "ยอดใช้จ่ายสุทธิ (บาท)",
+          submitBtn: "ยืนยันการทำรายการ",
+          backBtn: "ย้อนกลับ",
+          recentTrans: "ประวัติการทำรายการล่าสุด",
+          orders: "ออเดอร์",
+          export: "ดาวน์โหลดข้อมูล",
+          syncing: "กำลังประมวลผล...",
+          success: "ทำรายการสำเร็จ"
+        }
+      };
+
+      // Language Toggle Logic
+      function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'th' : 'en';
+        document.getElementById('lang-toggle-btn').innerText = currentLang === 'en' ? 'TH' : 'EN';
+        applyTranslations();
+      }
+
+      function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (i18n[currentLang][key]) {
+            if (el.tagName === 'INPUT') el.placeholder = i18n[currentLang][key];
+            else if (el.tagName === 'OPTION') el.innerText = i18n[currentLang][key];
+            else el.innerText = i18n[currentLang][key];
+          }
+        });
         
-        async function fetchData() {
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                
-                if (data.error) {
-                    document.getElementById('leaderboard').innerHTML = `<div class="loading" style="color: #FF3B30;">Error: ${data.error}</div>`;
-                    return;
-                }
-                
-                renderUsers(data.users);
-                renderBoard(data.leaderboard);
-            } catch (error) {
-                console.error("Fetch error", error);
-            }
+        // Re-render dashboard if visible to translate dynamic text
+        if (document.getElementById('admin-dashboard').style.display === 'block') {
+          renderDashboard(currentSummary);
         }
+      }
 
-        function renderUsers(users) {
-            const container = document.getElementById('user-buttons');
-            container.innerHTML = ''; 
-            
-            if (!users || users.length === 0) {
-                container.innerHTML = '<div class="loading">No targets found.</div>';
-                return;
-            }
+      // Excel Engine Loader
+      function loadXLSX(cb) {
+        if (window.XLSX) return cb();
+        const s = document.createElement('script'); s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+        s.onload = cb; document.head.appendChild(s);
+      }
 
-            users.forEach(name => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-report';
-                btn.innerText = name;
-                btn.onclick = () => reportUser(name, btn);
-                container.appendChild(btn);
-            });
+      // Input Formatters
+      document.getElementById('phone').addEventListener('input', e => {
+        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+        e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
+      });
+
+      document.getElementById('amount').addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, ''); e.target.value = v ? Number(v).toLocaleString() : "";
+      });
+
+      function setStatus(elementId, msg, type) {
+        const el = document.getElementById(elementId);
+        el.innerText = msg;
+        el.className = `status-text text-${type}`;
+      }
+
+      async function api(p) { return (await fetch(API_URL, {method:'POST', body: JSON.stringify(p)})).json(); }
+
+      async function login() {
+        const code = document.getElementById('passcode').value;
+        if(!code) return;
+        setStatus('login-status', i18n[currentLang].syncing, 'neutral');
+        
+        const res = await api({ action: 'login', passcode: code });
+        
+        if (res.success) {
+          currentPasscode = code; userRole = res.role;
+          document.getElementById('login-section').style.display = 'none';
+          
+          if (res.role === 'Admin') {
+            currentBranchList = res.branchList;
+            populateDropdown();
+            currentSummary = res.adminData;
+            renderDashboard(currentSummary);
+            document.getElementById('admin-dashboard').style.display = 'block';
+            document.getElementById('admin-meta').innerText = `${res.name} • Admin Session`;
+          } else {
+            showIntake(res.name, res.branch);
+          }
+        } else {
+          setStatus('login-status', res.message, 'error');
         }
+      }
 
-        function renderBoard(leaderboard) {
-            const container = document.getElementById('leaderboard');
-            container.innerHTML = ''; 
-            
-            if (!leaderboard || leaderboard.length === 0) {
-                container.innerHTML = '<div class="loading">No records found.</div>';
-                return;
-            }
+      function populateDropdown() {
+        const sel = document.getElementById('branch-override');
+        sel.innerHTML = `<option value="" data-i18n="selectDest">${i18n[currentLang].selectDest}</option>`;
+        currentBranchList.forEach(b => sel.innerHTML += `<option value="${b}">${b}</option>`);
+      }
 
-            leaderboard.forEach((player, index) => {
-                const row = document.createElement('div');
-                row.className = 'row';
-                row.innerHTML = `
-                    <div class="rank">${index + 1}</div>
-                    <div class="name">${player.name}</div>
-                    <div class="score">${player.score}</div>
-                `;
-                container.appendChild(row);
-            });
+      function renderDashboard(summary) {
+        const list = document.getElementById('branch-list'); list.innerHTML = "";
+        currentSummary = summary;
+        if (!summary || Object.keys(summary).length === 0) { 
+          list.innerHTML = `<p style='text-align:center; padding:40px; color:#86868B; font-size:14px;'>${i18n[currentLang].emptyQueue}</p>`; 
+          return; 
         }
-
-        async function reportUser(name, btnElement) {
-            const originalText = btnElement.innerText;
-            btnElement.innerText = 'Sending...';
-            btnElement.style.pointerEvents = 'none';
-            btnElement.style.opacity = '0.5';
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'snitch', sinner: name })
-                });
-                
-                const result = await response.json();
-                
-                if(result.status === 'success') {
-                    showNotification();
-                    fetchData(); 
-                }
-            } catch (error) {
-                alert("Connection failed.");
-            } finally {
-                btnElement.innerText = originalText;
-                btnElement.style.pointerEvents = 'auto';
-                btnElement.style.opacity = '1';
-            }
+        
+        for (let b in summary) {
+          const s = summary[b];
+          list.innerHTML += `
+            <div class="branch-card">
+              <div class="branch-info">
+                <div class="branch-title">${b}</div>
+                <div class="branch-data">${s.count} ${i18n[currentLang].orders} • ฿${s.total.toLocaleString()}</div>
+              </div>
+              <button class="btn-export" onclick="prepareExcel('${b}')">${i18n[currentLang].export}</button>
+            </div>`;
         }
+      }
 
-        function showNotification() {
-            const notif = document.getElementById('notification');
-            notif.classList.add('show');
-            setTimeout(() => { notif.classList.remove('show'); }, 3000);
+      async function loadAdminData() {
+        const icon = document.getElementById('refresh-svg'); icon.classList.add('spinning');
+        const res = await api({ action: 'getAdminData' });
+        icon.classList.remove('spinning');
+        renderDashboard(res.summary);
+      }
+
+      function showIntake(n, b) { 
+        document.getElementById('points-form').style.display = 'block'; 
+        document.getElementById('admin-dashboard').style.display = 'none'; 
+        document.getElementById('active-user-meta').innerText = `${n} • ${b}`; 
+        
+        if (userRole === 'Admin') {
+          document.getElementById('back-btn').style.display = 'flex';
+          document.getElementById('admin-branch-wrap').style.display = 'block';
+          document.getElementById('staff-signout').style.display = 'none'; 
+        } else {
+          document.getElementById('back-btn').style.display = 'none';
+          document.getElementById('admin-branch-wrap').style.display = 'none';
+          document.getElementById('staff-signout').style.display = 'flex'; 
         }
+      }
 
-        fetchData();
-        setInterval(fetchData, 30000);
+      function toggleView() {
+        if (document.getElementById('admin-dashboard').style.display === 'block') showIntake("Admin Mode", "Headquarters");
+        else {
+          document.getElementById('admin-dashboard').style.display = 'block';
+          document.getElementById('points-form').style.display = 'none';
+          loadAdminData();
+        }
+      }
+
+      function prepareExcel(branch) {
+        setStatus('submit-status', i18n[currentLang].syncing, 'neutral');
+        loadXLSX(async () => {
+          const res = await api({ action: 'exportBranch', branchName: branch });
+          if (res.success) {
+            const data = [["Phone Number", "Billing ID", "Money Amount"], ...res.csvData];
+            const ws = XLSX.utils.aoa_to_sheet(data), wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Points");
+            XLSX.writeFile(wb, `${branch}_Upload.xlsx`);
+            setStatus('submit-status', '', 'neutral');
+            setTimeout(loadAdminData, 1000);
+          }
+        });
+      }
+
+      async function submitData() {
+        const p = document.getElementById('phone').value.replace(/\D/g, '');
+        const b = document.getElementById('billing').value;
+        const a = document.getElementById('amount').value.replace(/\D/g, '');
+        const ov = document.getElementById('branch-override').value;
+        
+        if (userRole === 'Admin' && !ov) { setStatus('submit-status', 'Error', 'error'); return; }
+        if (p.length !== 10) { setStatus('submit-status', 'Error', 'error'); return; }
+        
+        setStatus('submit-status', i18n[currentLang].syncing, 'neutral');
+        const res = await api({ action:'submit', passcode:currentPasscode, phone:p, billingId:b, amount:a, branchOverride: ov });
+        
+        if(res.success) {
+          // Time capture for history log
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          
+          sessionHistory.unshift({ phone: p, amount: a, branch: res.branch, billing: b || '-', time: timeString });
+          updateHistory();
+          document.getElementById('phone').value = ''; document.getElementById('billing').value = ''; document.getElementById('amount').value = '';
+          setStatus('submit-status', i18n[currentLang].success, 'success'); 
+          setTimeout(() => setStatus('submit-status', '', 'neutral'), 3000);
+        } else {
+          setStatus('submit-status', res.message, 'error');
+        }
+      }
+
+      function updateHistory() {
+        document.getElementById('session-history-wrap').style.display = 'block';
+        document.getElementById('history-list').innerHTML = sessionHistory.slice(0, 5).map(h => `
+          <div class="history-item">
+            <div class="history-details">
+              <span class="history-primary">${h.phone}</span>
+              <span class="history-meta">${h.billing} • ${h.branch}</span>
+            </div>
+            <div class="history-details" style="align-items: flex-end;">
+              <span class="history-amount">฿${Number(h.amount).toLocaleString()}</span>
+              <span class="history-time">${h.time}</span>
+            </div>
+          </div>`).join('');
+      }
+      
+      // Initialize Default Language on Load
+      applyTranslations();
     </script>
-</body>
+  </body>
 </html>
